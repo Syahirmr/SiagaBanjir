@@ -1,0 +1,16 @@
+# Environment variables & credentials (never commit secrets)
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+
+# Python virtual environments & cache
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# OS & editor temporary files
+.DS_Store
+Thumbs.db
