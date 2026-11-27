@@ -1,19 +1,22 @@
 # Project Progress Tracker (TODO) — SiagaBanjir
 
-> **Status Dokumen:** Draft v0.4 (Revisi Pembagian Peran Final & Penyelarasan Git Bootstrap)  
-> **Tanggal Pembuatan:** 24 November 2026  
+> **Status Dokumen:** Draft v0.9 *(Track Syahir Siap Cross-Review: Keamanan `.env` Terverifikasi, 22/22 Test Lulus, Live API & E2E Baseline Teruji — Menunggu Ramadan & Keputusan Bersama)*  
+> **Tanggal Pembuatan:** 24 November 2026 *(Diperbarui: 27 November 2026)*  
 > **Tim:** 2 mahasiswa — **Member A (Syahir — LLM & Application Engineering)** & **Member B (Ramadan — Data & Knowledge Preparation)**  
 > **Acuan Kebutuhan:** [PRD.md](./PRD.md) (Draft v0.3)  
-> **Acuan Alur Kerja & Git:** [TEAM_WORKFLOW.md](./TEAM_WORKFLOW.md) (Draft v0.5)  
+> **Acuan Alur Kerja & Git:** [TEAM_WORKFLOW.md](./TEAM_WORKFLOW.md) (Draft v0.6)  
+> **Arsitektur & Safety/Log:** [ARCHITECTURE.md](./ARCHITECTURE.md) (Draft v0.2)  
 > **Data Dictionary & Audit:** [DATA_DICTIONARY.md](./DATA_DICTIONARY.md) (Draft v0.2)  
-> **Context Recovery:** [context_windows.md](./context_windows.md) (Draft v0.3)  
+> **Context Recovery:** [context_windows.md](./context_windows.md) (Draft v0.8)  
 > **Repository GitHub:** [Syahirmr/SiagaBanjir](https://github.com/Syahirmr/SiagaBanjir)
 
-**Aturan Status Tugas:**
+**Aturan Status Progres (`Progress Status` — terpisah dari `Execution Readiness` pada Bagian 6):**
 - `Not Started` — Belum dimulai.
 - `In Progress` — Sedang dikerjakan atau persiapan teknis sudah berjalan namun masih menunggu verifikasi/persetujuan.
 - `Blocked` — Terhambat oleh dependensi, akses data/API, atau keputusan tertunda.
 - `Completed` — Seluruh kriteria selesai terbukti secara objektif dan lulus *cross-review* (*tidak boleh ditandai selesai tanpa bukti*).
+
+> **Panduan Mulai Kerja:** Sebelum memulai Work ID apa pun, periksa **Bagian 6 (*Execution Readiness & Dependency Map*)** untuk memastikan apakah tugas berstatus `Ready`, `Ready-Coordination`, `Joint-Gate`, atau `Blocked` beserta pembuka dan aturan *handoff*-nya.
 
 ---
 
@@ -24,13 +27,13 @@ Pembagian peran final: **Syahir (13 tugas solo)**, **Ramadan (11 tugas solo)**, 
 
 | Milestone | Nama Milestone | Fase | Work ID | PIC Utama | Status | Catatan Progres / Gate |
 |---|---|---|---|---|---|---|
-| `M0` | Project Foundation Locked | Fase 1 | `WF-001`–`WF-003` | Bersama (Koord: Syahir) | `In Progress` | *Awaiting Team Approval* (Syahir & Ramadan) + verifikasi bootstrap branch (`master`/`syahir`/`ramadan`). |
-| `M1` | Technical Plan Approved | Fase 2 | `WF-004`–`WF-006` | Syahir & Ramadan | `In Progress` | Draf awal `WF-005` tersedia di `DATA_DICTIONARY.md` untuk direview Ramadan; menunggu `M0` & `WF-004`/`WF-006` Syahir. |
+| `M0` | Project Foundation Locked | Fase 1 | `WF-001`–`WF-003` | Bersama (Koord: Syahir) | `In Progress` | Persetujuan Syahir tercatat (`24 Nov 2026`) & branch `master`/`syahir`/`ramadan` terpublikasi; **menunggu persetujuan Ramadan** & verifikasi clone `ramadan`. |
+| `M1` | Technical Plan Approved | Fase 2 | `WF-004`–`WF-006` | Syahir & Ramadan | `In Progress` | Draf `WF-004`/`WF-006` ([ARCHITECTURE.md](./ARCHITECTURE.md) v0.2) & draf awal `WF-005` ([DATA_DICTIONARY.md](./DATA_DICTIONARY.md) v0.2) tersedia; menunggu penutupan `M0` & *cross-review* Ramadan. |
 | `M2` | Data Sources Collected & Verified | Fase 3 | `WF-007`–`WF-009` | Ramadan | `In Progress` | Inventaris awal 8 berkas `data/raw/` terdokumentasi di `DATA_DICTIONARY.md`; menunggu review Ramadan, kelengkapan URL asal & `M1`. |
 | `M3` | Raw Data Audited & Prepared | Fase 4–5 | `WF-010`–`WF-014` | Ramadan | `In Progress` | Audit fisik awal *read-only* `WF-010`–`WF-011` tersedia di `DATA_DICTIONARY.md` untuk direview Ramadan; `WF-012`–`WF-014` belum dimulai. |
-| `M4` | API & Model Configuration Validated | Fase 6 *(Paralel)* | `WF-015`–`WF-017` | Syahir | `Not Started` | Menunggu `M1` (paralel dengan `M2`–`M3`). |
-| `M5` | RAG Pipeline Operational & Corpus Frozen | Fase 7 | `WF-018`–`WF-021` | Syahir & Ramadan | `Not Started` | Menunggu `M3` dan `M4` (`WF-018` Ramadan koordinasi dgn Syahir). |
-| `M6` | MVP Chatbot Functional | Fase 8 | `WF-022`–`WF-026` | Syahir (QA: Ramadan) | `Not Started` | Menunggu `M5`. |
+| `M4` | API & Model Configuration Validated | Fase 6 *(Paralel)* | `WF-015`–`WF-017` | Syahir | `In Progress` | `.env` lokal aktif & terabaikan Git, `.env.example` bersih placeholder, tes live via `.env` lulus (`gemini-3.5-flash-lite` & `openai/gpt-oss-20b`), rekomendasi `OD-02` tersusun; **menunggu `M0`/`M1` & persetujuan `OD-02` Ramadan**. |
+| `M5` | RAG Pipeline Operational & Corpus Frozen | Fase 7 | `WF-018`–`WF-021` | Syahir & Ramadan | `In Progress` | Jalur Baseline lulus uji live E2E `ChatService` (`1.79s`, Bahasa Indonesia, JSONL valid bebas kredensial) & modul RAG teruji pada *fixture*; **menunggu handoff korpus Ramadan (`WF-018`) & `M4`**. |
+| `M6` | MVP Chatbot Functional | Fase 8 | `WF-022`–`WF-026` | Syahir (QA: Ramadan) | `In Progress` | `app.py` (basis Multazam) lolos `AppTest`, server lokal `HTTP 200 ok`, & 22/22 unit/smoke test lulus; **menunggu `M5` (korpus *frozen*) & QA lintas perangkat Ramadan (`WF-026`)**. |
 | `M7` | Evaluation Dataset & Ground Truth Ready | Fase 9 *(Paralel)* | `WF-027`–`WF-029` | Bersama | `Not Started` | Menunggu `M5` (*corpus frozen*; paralel dengan `M6`). |
 | `M8` | Baseline vs RAG Evaluation Completed | Fase 10–11 | `WF-030`–`WF-034` | Bersama | `Not Started` | Menunggu `M6` dan `M7`. |
 | `M9` | Academic Deliverables Completed | Fase 12 | `WF-035`–`WF-038` | Bersama | `Not Started` | Menunggu `M6` dan `M8`. |
@@ -73,8 +76,8 @@ Pembagian peran final: **Syahir (13 tugas solo)**, **Ramadan (11 tugas solo)**, 
 
 | Syarat M0 | Status Teknis | Bukti / Catatan |
 |---|---|---|
-| 1. `PRD.md` v0.3 menjadi acuan | Siap teknis (menunggu persetujuan kedua anggota) | [PRD.md](./PRD.md) Draft v0.3 tersedia; persetujuan eksplisit Syahir & Ramadan belum dicatat. |
-| 2. `TEAM_WORKFLOW.md` memuat peran final & aturan Git | Siap teknis (menunggu persetujuan kedua anggota) | [TEAM_WORKFLOW.md](./TEAM_WORKFLOW.md) Draft v0.5 memuat peran final (Syahir: LLM & App; Ramadan: Data & Knowledge) & Git strategy (`master`, `syahir`, `ramadan`). |
+| 1. `PRD.md` v0.3 menjadi acuan | Menunggu persetujuan Ramadan | [PRD.md](./PRD.md) v0.3 **disetujui Syahir** (`24 Nov 2026`); menunggu konfirmasi Ramadan. |
+| 2. `TEAM_WORKFLOW.md` memuat peran final & aturan Git | Menunggu persetujuan Ramadan | [TEAM_WORKFLOW.md](./TEAM_WORKFLOW.md) v0.5 **disetujui Syahir** (`24 Nov 2026`); menunggu konfirmasi Ramadan. |
 | 3. `TODO.md` memuat 42 task & semua milestone | Siap | Dokumen ini memuat `WF-001`–`WF-038`, `WF-OPT-01`–`WF-OPT-04`, `M0`–`M9`, `M-OPT`. |
 | 4. Konvensi folder terdokumentasi | Siap | Terdokumentasi di `TEAM_WORKFLOW.md` Bagian M.5 (`docs/`, `data/raw/`, `data/processed/`). |
 | 5. `.env` & kredensial aman dari Git | Siap secara lokal | `.gitignore` melindungi `.env`, `.env.*`, `.streamlit/secrets.toml`, `venv/` dan melacak `.env.example`; 0 file `.env` / API key hardcoded ditemukan. |
@@ -93,17 +96,17 @@ Pembagian peran final: **Syahir (13 tugas solo)**, **Ramadan (11 tugas solo)**, 
 
 | Work ID | Nama Pekerjaan | PIC | Reviewer | Milestone | Status | Referensi Output / Bukti | Blocker / Catatan |
 |---|---|---|---|---|---|---|---|
-| `WF-001` | Review & penguncian acuan `PRD.md` v0.3 | Bersama (Koord: Syahir) | Ramadan | `M0` | `In Progress` | [PRD.md](./PRD.md) (Draft v0.3) | *Awaiting Team Approval:* menunggu persetujuan resmi Syahir & Ramadan. |
-| `WF-002` | Persetujuan workflow, peran final & Git strategy | Bersama (Koord: Syahir) | Ramadan | `M0` | `In Progress` | [TEAM_WORKFLOW.md](./TEAM_WORKFLOW.md) (Draft v0.5) | *Awaiting Team Approval:* dokumen siap secara teknis, menunggu persetujuan Syahir & Ramadan. |
-| `WF-003` | Inisiasi `TODO.md`, konvensi folder, `.gitignore` & bootstrap branch Git | Bersama (Koord: Syahir) | Ramadan | `M0` | `In Progress` | [TODO.md](./TODO.md), `../.gitignore`, status Git bootstrap | `.gitignore` & `TODO.md` siap; menunggu verifikasi clone/branch `ramadan` dan persetujuan M0. |
+| `WF-001` | Review & penguncian acuan `PRD.md` v0.3 | Bersama (Koord: Syahir) | Ramadan | `M0` | `In Progress` | [PRD.md](./PRD.md) (Draft v0.3) | Disetujui Syahir (`24 Nov 2026`); *Awaiting Ramadan Approval*. |
+| `WF-002` | Persetujuan workflow, peran final & Git strategy | Bersama (Koord: Syahir) | Ramadan | `M0` | `In Progress` | [TEAM_WORKFLOW.md](./TEAM_WORKFLOW.md) (Draft v0.5) | Disetujui Syahir (`24 Nov 2026`); *Awaiting Ramadan Approval*. |
+| `WF-003` | Inisiasi `TODO.md`, konvensi folder, `.gitignore` & bootstrap branch Git | Bersama (Koord: Syahir) | Ramadan | `M0` | `In Progress` | [TODO.md](./TODO.md), `../.gitignore`, commit `c870f71` (`master`/`syahir`/`ramadan`) | Branch `master`/`syahir`/`ramadan` terpublikasi di GitHub (`c870f71`); menunggu verifikasi clone & akses branch `ramadan` oleh Ramadan. |
 
 ### Fase 2 — Technical Planning & Architecture Design (`M1`)
 
 | Work ID | Nama Pekerjaan | PIC | Reviewer | Milestone | Status | Referensi Output / Bukti | Blocker / Catatan |
 |---|---|---|---|---|---|---|---|
-| `WF-004` | Penyusunan `ARCHITECTURE.md` (RAG & LangChain selektif) | Member A (Syahir) | Member B (Ramadan) | `M1` | `Not Started` | `ARCHITECTURE.md` *(planned)* | Menunggu `M0` *Completed*. |
-| `WF-005` | Penetapan kontrak skema metadata & chunk korpus | Member B (Ramadan) | Member A (Syahir) | `M1` | `In Progress` | [DATA_DICTIONARY.md](./DATA_DICTIONARY.md) Bag. 1 | Draf kontrak awal tersedia (disusun Syahir); menunggu review/adopsi Ramadan, `WF-004`, dan `M0`. |
-| `WF-006` | Desain protokol safety darurat & skema log reproducibility | Member A (Syahir) | Member B (Ramadan) | `M1` | `Not Started` | Spesifikasi *safety prompt* & skema log di `ARCHITECTURE.md` *(planned)* | Menunggu `WF-004`. |
+| `WF-004` | Penyusunan `ARCHITECTURE.md` (RAG & LangChain selektif) | Member A (Syahir) | Member B (Ramadan) | `M1` | `In Progress` | [ARCHITECTURE.md](./ARCHITECTURE.md) (Draft v0.2, Bag. 1–10 & 13) | Draf teknis lengkap oleh Syahir + revisi review teknis (paritas Baseline–RAG, batas verifikasi sitasi); menunggu penutupan `M0` & *cross-review* Ramadan sebelum `Completed`. |
+| `WF-005` | Penetapan kontrak skema metadata & chunk korpus | Member B (Ramadan) | Member A (Syahir) | `M1` | `In Progress` | [DATA_DICTIONARY.md](./DATA_DICTIONARY.md) Bag. 1 & [ARCHITECTURE.md](./ARCHITECTURE.md) Bag. 8 | Draf kontrak awal tersedia (belum dikunci sepihak); menunggu review/persetujuan final Ramadan & penutupan `M0`. |
+| `WF-006` | Desain protokol safety darurat & skema log reproducibility | Member A (Syahir) | Member B (Ramadan) | `M1` | `In Progress` | [ARCHITECTURE.md](./ARCHITECTURE.md) (Draft v0.2, Bag. 11–12) | Draf protokol keselamatan 8 elemen, skema log JSONL (`prompt_version`, data sintetis), uji FP/FN `WF-023`, & kontrol eksperimen selesai; menunggu penutupan `M0` & *cross-review* Ramadan sebelum `Completed`. |
 
 ### Fase 3 — Data Collection & Source Verification (`M2`)
 
@@ -127,27 +130,27 @@ Pembagian peran final: **Syahir (13 tugas solo)**, **Ramadan (11 tugas solo)**, 
 
 | Work ID | Nama Pekerjaan | PIC | Reviewer | Milestone | Status | Referensi Output / Bukti | Blocker / Catatan |
 |---|---|---|---|---|---|---|---|
-| `WF-015` | Setup lingkungan & pengelolaan API key aman (`.env.example`) | Member A (Syahir) | Member B (Ramadan) | `M4` | `Not Started` | `.env.example`, modul pemuat konfigurasi `.env` | Menunggu `M1`; berjalan paralel dengan `M2`–`M3`. |
-| `WF-016` | Pengujian aktual Gemini API (utama) & Groq API (cadangan) | Member A (Syahir) | Member B (Ramadan) | `M4` | `Not Started` | Log & tabel perbandingan tes API aktual | Menunggu `WF-015`; jangan mengunci model sebelum bukti tes. |
-| `WF-017` | Penetapan model spesifik & konfigurasi terkendali (`OD-02`) | Member A (Syahir) | Member B (Ramadan) | `M4` | `Not Started` | Catatan keputusan `OD-02` di `ARCHITECTURE.md` *(planned)* | Menunggu `WF-016`. |
+| `WF-015` | Setup lingkungan & pengelolaan API key aman (`.env.example`) | Member A (Syahir) | Member B (Ramadan) | `M4` | `In Progress` | `.env.example` (placeholder bersih), `.gitignore`, `requirements.txt`, `src/config.py`, `src/schemas.py` | Keamanan terverifikasi (`.env` aktif & diabaikan Git, 0 kebocoran di repo/log/riwayat Git, 5/5 test keamanan lulus); menunggu `M0`/`M1` & *cross-review* Ramadan sebelum `Completed`. |
+| `WF-016` | Pengujian aktual Gemini API (utama) & Groq API (cadangan) | Member A (Syahir) | Member B (Ramadan) | `M4` | `In Progress` | `scripts/test_api.py`, `logs/api_test_results.jsonl` + verifikasi ulang via `.env` lokal | **Teruji live via `.env` (27 Nov):** Gemini `gemini-3.5-flash-lite` sukses (`2.5–7.3s`, *fixed sampling defaults*), `gemini-3.8-flash` 503, `gemini-2.5-*` 404; Groq `openai/gpt-oss-20b` sukses (`1.5–2.1s`), `qwen/qwen3.8-27b` sukses (`1.4–2.1s`), `llama-3.*` 404. Menunggu *cross-review* Ramadan & `M0`/`M1`. |
+| `WF-017` | Penetapan model spesifik & konfigurasi terkendali (`OD-02`) | Member A (Syahir) | Member B (Ramadan) | `M4` | `In Progress` | Rekomendasi `OD-02` di Bag. 5.2 & `context_windows.md` v0.8 | **Rekomendasi draf (belum dikunci):** Primary `gemini-3.5-flash-lite` + Fallback `openai/gpt-oss-20b` (catatan: Gemini memakai *fixed sampling defaults* sehingga `temperature` diabaikan; eksperimen wajib model/parameter identik & `allow_fallback=False`). Menunggu persetujuan Ramadan. |
 
 ### Fase 7 — Corpus Preparation, RAG Development & Corpus Freeze (`M5`)
 
 | Work ID | Nama Pekerjaan | PIC | Reviewer | Milestone | Status | Referensi Output / Bukti | Blocker / Catatan |
 |---|---|---|---|---|---|---|---|
 | `WF-018` | Chunking korpus & penyusunan `corpus_manifest` berversi | Member B (Ramadan) | Member A (Syahir) | `M5` | `Not Started` | Dataset *chunk* ber-metadata & `corpus_manifest` berversi | Menunggu `M3` (`WF-012`, `WF-014`); koordinasi integrasi bersama Syahir. |
-| `WF-019` | Implementasi indeks retrieval & pipeline RAG (LangChain selektif) | Member A (Syahir) | Member B (Ramadan) | `M5` | `Not Started` | Modul *retriever* & *pipeline* RAG operasional | Menunggu `WF-018` dan `M4` (`WF-017`). |
-| `WF-020` | Implementasi jalur Baseline LLM (tanpa retrieval) | Member A (Syahir) | Member B (Ramadan) | `M5` | `Not Started` | Modul/mode eksekusi *Baseline* LLM identik parameter | Menunggu `M4` (`WF-017`), `WF-019`. |
+| `WF-019` | Implementasi indeks retrieval & pipeline RAG (LangChain selektif) | Member A (Syahir) | Member B (Ramadan) | `M5` | `In Progress` | `src/retrieval/retriever.py`, `src/llm/prompts.py`, `src/llm/client.py`, `src/pipeline/chat_service.py` | Teruji pada *fixture* korpus sintetis & *mock* LLM; **menunggu handoff `WF-018` (`data/processed/`) & `M4`** untuk integrasi korpus nyata. |
+| `WF-020` | Implementasi jalur Baseline LLM (tanpa retrieval) | Member A (Syahir) | Member B (Ramadan) | `M5` | `In Progress` | `src/llm/prompts.py`, `src/pipeline/chat_service.py` (`mode="baseline"`) | Lulus uji live E2E `ChatService` via `.env` (`gemini-3.5-flash-lite`, `1.79s`, 1.215 char Bahasa Indonesia, `allow_fallback=False`, JSONL 27 field bebas kredensial); menunggu penguncian final `OD-02` (`WF-017`). |
 | `WF-021` | Verifikasi kualitas retrieval, kesiapan Baseline & Corpus Freeze | Bersama (Koord: Ramadan) | Kedua anggota | `M5` | `Not Started` | Catatan uji internal & persetujuan `corpus_v1.0-frozen` | Menunggu `WF-018`, `WF-019`, `WF-020`. |
 
 ### Fase 8 — Streamlit Integration & Safety Implementation (`M6`)
 
 | Work ID | Nama Pekerjaan | PIC | Reviewer | Milestone | Status | Referensi Output / Bukti | Blocker / Catatan |
 |---|---|---|---|---|---|---|---|
-| `WF-022` | Pengembangan antarmuka chat Streamlit lokal & transparansi UI | Member A (Syahir) | Member B (Ramadan) | `M6` | `Not Started` | Aplikasi Streamlit lokal (`FR-01`, `FR-10`) | Menunggu `M5`. |
-| `WF-023` | Implementasi protokol darurat akut, abstention & ambiguitas | Member A (Syahir) | Member B (Ramadan) | `M6` | `Not Started` | Logika *safety* & *prompt* (`FR-05`, `FR-07`, `FR-08`) | Menunggu `WF-006`, `WF-019`, `WF-022`. |
-| `WF-024` | Implementasi error handling & fallback Groq API | Member A (Syahir) | Member B (Ramadan) | `M6` | `Not Started` | Mekanisme *error handling* & konfigurasi cadangan (`FR-09`) | Menunggu `WF-022`, `M4`. |
-| `WF-025` | Implementasi logger reproducibility & evaluasi (`FR-11`) | Member A (Syahir) | Member B (Ramadan) | `M6` | `Not Started` | Modul/skrip log (`provider`, `model_id`, `corpus_version`, `source_dates`) | Menunggu `WF-006`, `WF-019`, `WF-020`. |
+| `WF-022` | Pengembangan antarmuka chat Streamlit lokal & transparansi UI | Member A (Syahir) | Member B (Ramadan) | `M6` | `In Progress` | `app.py` (adaptasi starter Multazam), `requirements.txt`, `tests/test_app_multazam_integration.py` | Seluruh paket `requirements.txt` terpasang di `venv` (`streamlit 1.67.0`); `app.py` lolos `AppTest`, server lokal `HTTP 200 ok`, & 22/22 unit/smoke test lulus; menunggu `M5` (korpus *frozen*) & QA Ramadan (`WF-026`). |
+| `WF-023` | Implementasi protokol darurat akut, abstention & ambiguitas | Member A (Syahir) | Member B (Ramadan) | `M6` | `In Progress` | `src/safety/guard.py`, `tests/test_safety_guard.py` (6/6 suite FP/FN lulus + `AppTest` darurat) | Deteksi darurat/prediksi/ambigu/OOD & *Evidence Gate* lulus uji unit & `AppTest`; menunggu integrasi korpus nyata `M5` & review Ramadan. |
+| `WF-024` | Implementasi error handling & fallback Groq API | Member A (Syahir) | Member B (Ramadan) | `M6` | `In Progress` | `src/llm/client.py`, `src/pipeline/chat_service.py`, `tests/test_pipeline_and_logging.py` | Uji *fallback* demo vs blokir *silent fallback* eksperimen, `max_retries=0`, & sanitasi key lulus + koneksi live Gemini/Groq via `.env` terverifikasi; menunggu integrasi `M5` & review Ramadan. |
+| `WF-025` | Implementasi logger reproducibility & evaluasi (`FR-11`) | Member A (Syahir) | Member B (Ramadan) | `M6` | `In Progress` | `src/logging/eval_logger.py`, `tests/test_pipeline_and_logging.py` | Skema JSONL 27 field terverifikasi pada request live E2E Baseline (0 kebocoran kredensial, masking PII demo, `validate_experiment_logs` lulus); menunggu integrasi `M5`. |
 | `WF-026` | Uji fungsional end-to-end, negative testing & lintas perangkat | Member B (Ramadan) | Member A (Syahir) | `M6` | `Not Started` | Laporan QA MVP & bukti jalan di perangkat kedua anggota | Menunggu `WF-022`–`WF-025`. |
 
 ### Fase 9 — Test Dataset & Ground Truth Preparation (`M7` — Paralel Pasca-`M5`)
@@ -162,8 +165,8 @@ Pembagian peran final: **Syahir (13 tugas solo)**, **Ramadan (11 tugas solo)**, 
 
 | Work ID | Nama Pekerjaan | PIC | Reviewer | Milestone | Status | Referensi Output / Bukti | Blocker / Catatan |
 |---|---|---|---|---|---|---|---|
-| `WF-030` | Eksekusi eksperimen Kondisi A (Baseline LLM tanpa retrieval) | Member A (Syahir) | Member B (Ramadan) | `M8` | `Not Started` | File log mentah 30 respons Kondisi A | Menunggu `M6`, `M7`, `WF-020`. |
-| `WF-031` | Eksekusi eksperimen Kondisi B (SiagaBanjir RAG) & uji darurat | Member A (Syahir) | Member B (Ramadan) | `M8` | `Not Started` | File log mentah 30 respons Kondisi B + log kasus darurat | Menunggu `M6`, `M7`, `WF-030` (model/parameter identik). |
+| `WF-030` | Eksekusi eksperimen Kondisi A (Baseline LLM tanpa retrieval) | Member A (Syahir) | Member B (Ramadan) | `M8` | `Not Started` | `scripts/run_eval.py` *(runner siap & teruji mock)*; file log 30 respons belum dijalankan | Menunggu `M6`, `M7`, `WF-020` (model & 30 soal terkunci). |
+| `WF-031` | Eksekusi eksperimen Kondisi B (SiagaBanjir RAG) & uji darurat | Member A (Syahir) | Member B (Ramadan) | `M8` | `Not Started` | `scripts/run_eval.py` *(runner siap & teruji mock)*; file log 30 respons belum dijalankan | Menunggu `M6`, `M7`, `WF-030` (model/parameter identik & korpus *frozen*). |
 | `WF-032` | Penilaian independen oleh Member A dan Member B | Syahir & Ramadan (terpisah) | Rekonsiliasi di `WF-033` | `M8` | `Not Started` | 2 lembar penilaian independen terpisah (Lembar A & Lembar B) | Menunggu `WF-030`, `WF-031`, `WF-029`. |
 | `WF-033` | Rekonsiliasi skor & kompilasi metrik aktual Baseline vs RAG | Bersama | Kedua anggota | `M8` | `Not Started` | Tabel skor terekonsiliasi + catatan kesepakatan/selisih | Menunggu `WF-032`, `WF-028`. |
 | `WF-034` | Analisis kesalahan (*error analysis*) & dokumentasi keterbatasan | Bersama (Koord: Ramadan) | Member A (Syahir) | `M8` | `Not Started` | Laporan evaluasi aktual & *Error Analysis* | Menunggu `WF-033`, `WF-030`, `WF-031`. |
@@ -193,18 +196,110 @@ Pembagian peran final: **Syahir (13 tugas solo)**, **Ramadan (11 tugas solo)**, 
 ### 5.1 Log Persetujuan M0 *(Diisi Langsung oleh Anggota Tim)*
 | Anggota | Peran Final | Persetujuan `PRD.md` v0.3 | Persetujuan `TEAM_WORKFLOW.md` v0.5 | Tanggal | Catatan |
 |---|---|---|---|---|---|
-| **Member A (Syahir)** | LLM & Application Engineering | *Belum dicatat* | *Belum dicatat* | — | Konfirmasi manual diperlukan untuk menutup `M0`. |
-| **Member B (Ramadan)** | Data & Knowledge Preparation | *Belum dicatat* | *Belum dicatat* | — | Konfirmasi manual diperlukan untuk menutup `M0`. |
+| **Member A (Syahir)** | LLM & Application Engineering | **Disetujui** | **Disetujui** | 24 Nov 2026 | Dikonfirmasi langsung oleh Syahir. |
+| **Member B (Ramadan)** | Data & Knowledge Preparation | *Belum dicatat* | *Belum dicatat* | — | Menunggu konfirmasi langsung Ramadan untuk menutup `M0`. |
 
 ### 5.2 Catatan Keputusan & Open Decisions (`OD-01`–`OD-05`)
 | Tanggal | ID / Topik | Status | Ringkasan Keputusan / Catatan | Dampak Dokumen |
 |---|---|---|---|---|
 | 24 Nov 2026 | Domain & keputusan inti tim | Final | Domain disetujui dosen; 2 mahasiswa; Gemini API utama & Groq cadangan; RAG + LangChain selektif; Streamlit lokal; 30 soal Baseline vs RAG; statistik BNPB bersyarat. | [PRD.md](./PRD.md) v0.3 |
-| 24 Nov 2026 | Revisi pembagian peran final & Git bootstrap | Final (peran) / Bootstrap M0 | **Syahir (Member A): LLM & Application Engineering** (13 solo); **Ramadan (Member B): Data & Knowledge Preparation** (11 solo termasuk `WF-018` koordinasi dgn Syahir & QA `WF-026`); 14 bersama. Artefak audit awal `DATA_DICTIONARY.md` dipertahankan untuk review Ramadan. | [TEAM_WORKFLOW.md](./TEAM_WORKFLOW.md) v0.5, [TODO.md](./TODO.md) v0.4, [DATA_DICTIONARY.md](./DATA_DICTIONARY.md) v0.2, [context_windows.md](./context_windows.md) v0.3 |
+| 24 Nov 2026 | Revisi pembagian peran final & Git bootstrap | Final (peran) / Bootstrap M0 | **Syahir (Member A): LLM & Application Engineering** (13 solo); **Ramadan (Member B): Data & Knowledge Preparation** (11 solo termasuk `WF-018` koordinasi dgn Syahir & QA `WF-026`); 14 bersama. Commit fondasi `c870f71` terpublikasi di `master`, `syahir`, `ramadan`. | [TEAM_WORKFLOW.md](./TEAM_WORKFLOW.md) v0.5, [TODO.md](./TODO.md) v0.5, [DATA_DICTIONARY.md](./DATA_DICTIONARY.md) v0.2, [context_windows.md](./context_windows.md) v0.4 |
+| 24 Nov 2026 | Draf Arsitektur RAG, Safety Protocol & Logging (`WF-004`, `WF-006`) | Draf v0.2 *(menunggu review Ramadan & M0)* | Rancangan teknis RAG + LangChain selektif, paritas instruksi dasar Baseline vs RAG (`prompt_version`), bypass darurat akut (112 bergantung wilayah, Basarnas 115), batas verifikasi sitasi, isolasi `<retrieved_context>` sebagai mitigasi berlapis, skema log JSONL (contoh sintetis `2026-11-24`), & kewajiban uji FP/FN `WF-023` (`TD-01`–`TD-06` terbuka). | [ARCHITECTURE.md](./ARCHITECTURE.md) v0.2, [TODO.md](./TODO.md) v0.6, [context_windows.md](./context_windows.md) v0.5 |
+| 24 Nov 2026 | Peta Dependensi 42 Work ID & Aturan Operasional Handoff | Aktif *(Acuan Eksekusi)* | Penambahan *Execution Readiness & Dependency Map* 42 Work ID (`Bagian 6`) dan penyelarasan aturan operasional *handoff*, *cross-review*, pencatatan keputusan WhatsApp → repo, serta *non-claim rule*. | [TODO.md](./TODO.md) v0.6, [TEAM_WORKFLOW.md](./TEAM_WORKFLOW.md) v0.6, [context_windows.md](./context_windows.md) v0.5 |
+| 27 Nov 2026 | Finalisasi Track Syahir, Verifikasi `.env`, Live E2E Baseline & Rekomendasi `OD-02` | Siap Cross-Review *(OD-02 belum dikunci)* | Keamanan `.env` terverifikasi (`.env` aktif & diabaikan `.gitignore`, `.env.example` bersih placeholder, 0 kebocoran di repo/log/riwayat Git). Live probe via `.env` lulus untuk Gemini `gemini-3.5-flash-lite` & Groq `openai/gpt-oss-20b`; E2E Baseline `ChatService` lulus (`1.79s`, 1.215 char Bahasa Indonesia, JSONL 27 field bebas kredensial); Streamlit `HTTP 200 ok`, `AppTest` lulus, dan **22/22 unit/smoke test lulus**. Rekomendasi `OD-02`: Primary `gemini-3.5-flash-lite` (catatan: *fixed sampling defaults* mengabaikan `temperature`) + Fallback `openai/gpt-oss-20b`; menunggu persetujuan Ramadan. | [TODO.md](./TODO.md) v0.9, [context_windows.md](./context_windows.md) v0.8, `logs/api_test_results.jsonl` |
 | 24 Nov 2026 | Sprint Plan 7 Hari & Context Recovery | Siap Teknis *(target operasional relatif)* | Jadwal paralel Hari 1–7 untuk 38 tugas inti + catatan bottleneck/pemangkasan fitur opsional serta pembuatan `context_windows.md`. | [TODO.md](./TODO.md) v0.4, [context_windows.md](./context_windows.md) v0.3 |
 | 24 Nov 2026 | Draf Kontrak Metadata (`WF-005`) & Physical Audit *Read-Only* (`WF-007`–`WF-011`) | Draf Awal *(review Ramadan)* | Audit fisik seluruh 8 berkas `data/raw/`: PDF BNPB 2018 100% *born-digital* (no OCR), TXT SE BNPB 4/2026 layak perlu *cleaning*, 2 Excel BNPB ditolak (bukan khusus banjir), 1 Excel kab/kota selisih total (`1.428` vs `1.420`), 3 Excel layak bersyarat (`FR-12` tetap opsional). | [DATA_DICTIONARY.md](./DATA_DICTIONARY.md) v0.2, [TODO.md](./TODO.md) v0.4 |
 | — | `OD-01` Judul akademik final | Open | Ditetapkan pada `WF-035` (`M9`). | `PRD.md`, Poster |
-| — | `OD-02` Model spesifik & konfigurasi API | Open | Ditetapkan setelah tes aktual Gemini/Groq pada `WF-017` (`M4`). | `ARCHITECTURE.md` |
+| — | `OD-02` Model spesifik & konfigurasi API | Open *(Rekomendasi Syahir siap review)* | Usulan berbasis bukti `WF-016`: Primary `gemini-3.5-flash-lite` (*fixed sampling defaults*, `temperature` diabaikan) & Fallback `openai/gpt-oss-20b`; eksperimen wajib model/parameter identik & `allow_fallback=False`. Menunggu konfirmasi Ramadan pada `WF-017`. | `ARCHITECTURE.md` |
 | — | `OD-03` Daftar sumber final & kelayakan BNPB | Open | Ditetapkan setelah *data collection* & *physical audit* pada `WF-014` (`M3`). | `DATA_DICTIONARY.md` |
 | — | `OD-04` Jadwal kalender spesifik *milestone* | Open *(parsial)* | Pembagian kerja & Sprint 7 Hari selesai; tanggal kalender UAS menunggu konfirmasi tim. | `TEAM_WORKFLOW.md`, `TODO.md` |
 | — | `OD-05` Rubrik & ambang evaluasi | Open | Ditetapkan setelah penyusunan 30 pertanyaan uji pada `WF-029` (`M7`). | `EVALUATION_PLAN.md` |
+
+---
+
+## 6. Execution Readiness & Dependency Map (Seluruh 42 Work ID)
+
+Bagian ini menjadi acuan operasional bagi **Member A (Syahir)** dan **Member B (Ramadan)** untuk mengetahui tugas mana yang dapat dikerjakan mandiri, paralel, membutuhkan koordinasi, atau wajib menunggu *handoff*/*Exit Gate*.
+
+### 6.1 Definisi Tipe Dependensi & Status Kesiapan Eksekusi
+
+**4 Tipe Dependensi (`Tipe Dep`):**
+- `INDEPENDENT` — PIC dapat memulai dan menyelesaikan sendiri setelah *hard prerequisite* terpenuhi.
+- `PARALLEL-COORDINATION` — Dapat dikerjakan bersamaan dengan jalur partner; kontrak/parameter tertentu wajib disinkronkan sebelum finalisasi atau integrasi.
+- `HANDOFF-BLOCKED` — Tidak dapat dimulai sebelum artefak *handoff* dari PIC sebelumnya tersedia dan diterima reviewer.
+- `JOINT` — Membutuhkan keputusan, persetujuan, atau pekerjaan bersama kedua anggota (`Syahir` & `Ramadan`).
+
+**4 Status Kesiapan Eksekusi (`Readiness` — terpisah dari `Progress Status` di Bagian 4):**
+- `Ready` — Seluruh *hard prerequisite* terpenuhi; PIC dapat langsung mengeksekusi.
+- `Ready-Coordination` — Draf awal (*provisional*) atau tinjauan di branch pribadi dapat langsung dikerjakan, namun perubahan status menjadi `Completed` menunggu sinkronisasi kontrak/penutupan *gate* dan *cross-review*.
+- `Blocked` — Terkunci menunggu *Exit Gate*, artefak *handoff*, atau kondisi bersyarat (*lihat kolom Blocked Reason & Pembuka*).
+- `Joint-Gate` — Gerbang persetujuan/keputusan bersama yang terbuka hanya setelah kedua anggota menyelesaikan bagiannya.
+
+### 6.2 Peta Jalur Kritis (*Critical Path*) & Jalur Paralel
+
+- **Jalur Kritis (*Critical Path*):** `M0` (`WF-001`–`003`) → `M1` (`WF-004`–`006`) → `M2` (`WF-007`–`008`) → `M3` (`WF-010`, `WF-012`–`014`) → `M5` (`WF-018`–`021`) → `M6` (`WF-022`–`026`) → `M8` (`WF-030`–`034`) → `M9` (`WF-035`–`038`), dengan **cabang paralel kritis** `M5` → `M7` (`WF-027`–`029`) → `M8` yang bertemu di `WF-030`.
+- **4 Jalur Paralel yang Diizinkan:**
+  1. **Saat M0–M1 (*Provisional*):** Syahir menyempurnakan draf `WF-004`/`WF-006` (`ARCHITECTURE.md`) **paralel** dengan Ramadan meninjau `WF-005` & audit awal `WF-007`–`WF-011` (`DATA_DICTIONARY.md`); `M1` tetap terkunci hingga `M0` lulus *Exit Gate*.
+  2. **Pasca-`M1`:** Syahir mengerjakan `M4` (`WF-015`→`WF-016`→`WF-017`) **paralel penuh** dengan Ramadan mengerjakan `M2`–`M3` (`WF-007`–`WF-014`); bertemu di `M5`.
+  3. **Pasca-`M5` (*Corpus Freeze*):** Syahir mengerjakan `M6` (`WF-022`–`WF-025`, lalu QA Ramadan `WF-026`) **paralel** dengan penyusunan `M7` (`WF-027`–`WF-029`); bertemu di `M8`.
+  4. **Penilaian Independen (`WF-032`):** Syahir dan Ramadan menilai 30 Baseline + 30 RAG + uji darurat secara terpisah sebelum rekonsiliasi `WF-033`.
+
+### 6.3 Ringkasan Siap Dikerjakan Sekarang (*Actionable Now*) & Daftar *Blocked* *(per 27 Nov 2026)*
+
+**Rekap Kesiapan 42 Work ID:** `0 Ready` | `3 Joint-Gate` | `8 Ready-Coordination` | `31 Blocked` *(Progress aktual: `20 In Progress` [termasuk 9 item track Syahir siap cross-review], `22 Not Started`, `0 Completed`)*.
+
+| Kelompok | Status Kesiapan | Work ID | Aksi Konkret / Pembuka |
+|---|---|---|---|
+| **Bersama (`M0`)** | `Joint-Gate` (3) | `WF-001`, `WF-002`, `WF-003` | Persetujuan Syahir sudah tercatat (`24 Nov 2026`) & branch `master`/`syahir`/`ramadan` sudah dipublikasi (`c870f71`). **Pembuka `M0`:** Ramadan mencatat persetujuan di Bag. 5.1 & mengonfirmasi clone/akses branch `ramadan`. |
+| **Syahir (`Member A`)** | `Ready-Coordination` (2) | `WF-004`, `WF-006` | Draf [ARCHITECTURE.md](./ARCHITECTURE.md) v0.2 siap di-*commit*/*push* ke `origin/syahir` dan diajukan *cross-review* ke Ramadan. |
+| **Ramadan (`Member B`)** | `Ready-Coordination` (6) | `WF-005`, `WF-007`, `WF-008`, `WF-009`, `WF-010`, `WF-011` | Review & finalisasi kontrak metadata (`WF-005`) di [DATA_DICTIONARY.md](./DATA_DICTIONARY.md) Bag. 1; lengkapi URL asal `SRC-EDU-001` & BNPB, putuskan kebutuhan sumber terbaru (`WF-007`–`009`), dan konfirmasi hasil audit fisik awal (`WF-010`–`011`). |
+| **Syahir — `Blocked`** | `Blocked` (13) | `WF-015`–`017`, `WF-019`–`020`, `WF-022`–`025`, `WF-030`–`031`, `WF-OPT-02`, `WF-OPT-04` | `WF-015`–`017` dibuka oleh `M0`+`M1`; `WF-019`–`020` oleh `WF-018`+`M4`; `WF-022`–`025` oleh `M5`; `WF-030`–`031` oleh `M6`+`M7`; `WF-OPT-02` oleh `WF-OPT-01`; `WF-OPT-04` hanya jika `M8` selesai lebih awal tanpa ganggu `M9`. |
+| **Ramadan — `Blocked`** | `Blocked` (7) | `WF-012`–`014`, `WF-018`, `WF-026`, `WF-OPT-01`, `WF-OPT-03` | `WF-012`–`014` dibuka oleh `WF-005`+`WF-010`; `WF-018` oleh `M3`+koordinasi Syahir; `WF-026` oleh `WF-022`–`025` (`H5`); `WF-OPT-01` oleh `M6`+`WF-011` Layak; `WF-OPT-03` oleh `WF-OPT-02`. |
+| **Bersama — `Blocked`** | `Blocked` (11) | `WF-021`, `WF-027`–`029`, `WF-032`–`038` | `WF-021` dibuka oleh `WF-018`–`020`; `WF-027`–`029` oleh `M5`; `WF-032`–`034` oleh `WF-030`–`031`+`WF-029`; `WF-035`–`038` oleh `M8`+`M6`. |
+
+### 6.4 Tabel Dependency Map Lengkap (42 Work ID — DAG Tanpa Siklus)
+
+| Work ID | PIC | Tipe Dep | Hard Prerequisite | Readiness | Paralel Dengan | Handoff / Cross-Review Gate | Blocked Reason & Pembuka |
+|---|---|---|---|---|---|---|---|
+| `WF-001` | Bersama (Koord: Syahir) | `JOINT` | `PRD.md` v0.3 | `Joint-Gate` | `WF-002`, `WF-003` | Rev Ramadan; Gate `M0` | Syahir setuju (`24 Nov`); **terbuka jika Ramadan mencatat persetujuan di Bag. 5.1**. |
+| `WF-002` | Bersama (Koord: Syahir) | `JOINT` | `WF-001` | `Joint-Gate` | `WF-001`, `WF-003` | Rev Ramadan; Gate `M0` | Syahir setuju (`24 Nov`); **terbuka jika Ramadan mencatat persetujuan di Bag. 5.1**. |
+| `WF-003` | Bersama (Koord: Syahir) | `JOINT` | `WF-002` | `Joint-Gate` | `WF-001`, `WF-002` | Rev Ramadan; Gate `M0` | Branch `master`/`syahir`/`ramadan` aktif (`c870f71`); **terbuka jika Ramadan verifikasi clone `ramadan`**. |
+| `WF-004` | Member A (Syahir) | `PARALLEL-COORDINATION` | `M0` *(draf provisional di branch `syahir`)* | `Ready-Coordination` | `WF-005`, `WF-006` | Handoff `H1` → Rev Ramadan; Gate `M1` | Draf `ARCHITECTURE.md` v0.2 siap review; `Completed` menunggu `M0` lulus & *cross-review* Ramadan. |
+| `WF-005` | Member B (Ramadan) | `PARALLEL-COORDINATION` | `M0` *(sinkron dgn draf `WF-004`)* | `Ready-Coordination` | `WF-004`, `WF-006` | Handoff `H1` → Rev Syahir; Gate `M1` | Draf kontrak awal tersedia di `DATA_DICTIONARY.md` Bag. 1; `Completed` menunggu review Ramadan, `M0`, & *cross-review* Syahir. |
+| `WF-006` | Member A (Syahir) | `PARALLEL-COORDINATION` | `WF-004`, `M0` | `Ready-Coordination` | `WF-004`, `WF-005` | Handoff `H1` → Rev Ramadan; Gate `M1` | Draf safety & log (`ARCHITECTURE.md` Bag. 11–12) siap review; `Completed` menunggu `M0` & *cross-review* Ramadan. |
+| `WF-007` | Member B (Ramadan) | `INDEPENDENT` | `M1` *(review awal provisional tersedia)* | `Ready-Coordination` | `WF-008`, `WF-009`, `M4` (pasca-`M1`) | Rev Syahir; Gate `M2` | Inventaris awal 2 berkas edukasi siap ditinjau Ramadan; penutupan menunggu `M1` & review Syahir. |
+| `WF-008` | Member B (Ramadan) | `INDEPENDENT` | `WF-007`, `WF-005` | `Ready-Coordination` | `WF-007`, `WF-009`, `M4` (pasca-`M1`) | Rev Syahir; Gate `M2` | Lengkapi URL resmi `SRC-EDU-001` secara provisional; finalisasi menunggu `WF-005` & `M1`. |
+| `WF-009` | Member B (Ramadan) | `INDEPENDENT` | `M1` | `Ready-Coordination` | `WF-007`, `WF-008`, `M4` (pasca-`M1`) | Rev Syahir; Gate `M2` | Inventaris awal 6 Excel BNPB siap direview (lengkapi URL DIBI); finalisasi menunggu `M1`. |
+| `WF-010` | Member B (Ramadan) | `INDEPENDENT` | `M2` (`WF-007`, `WF-008`) | `Ready-Coordination` | `WF-011`, `M4` (pasca-`M1`) | Rev Syahir; bagian `M3` | Audit fisik awal *read-only* tersedia di `DATA_DICTIONARY.md` Bag. 3; `Completed` menunggu `M2` & konfirmasi Ramadan/Syahir. |
+| `WF-011` | Member B (Ramadan) | `INDEPENDENT` | `WF-009` | `Ready-Coordination` | `WF-010`, `M4` (pasca-`M1`) | Rev Syahir; gerbang kelayakan `M-OPT` | Audit fisik awal 6 Excel tersedia di `DATA_DICTIONARY.md` Bag. 4; `Completed` menunggu `WF-009`/`M2` & konfirmasi. |
+| `WF-012` | Member B (Ramadan) | `INDEPENDENT` | `WF-010`, `WF-005` | `Blocked` | `M4` (`WF-015`–`WF-017`) | Rev Syahir; bagian `H2`/`M3` | Menunggu `WF-005` (kontrak metadata final) & `WF-010` (keputusan audit & tambahan sumber) lulus review. |
+| `WF-013` | Member B (Ramadan) | `INDEPENDENT` | `WF-012` | `Blocked` | `M4` (`WF-015`–`WF-017`) | Rev Syahir; bagian `H2`/`M3` | Menunggu output teks bersih di `data/processed/` hasil `WF-012`. |
+| `WF-014` | Member B (Ramadan) | `INDEPENDENT` | `WF-010`, `WF-011`, `WF-012`, `WF-013` | `Blocked` | `M4` (`WF-015`–`WF-017`) | Handoff `H2` → Rev Syahir; tutup `M3` & `OD-03` | Menunggu `WF-010`–`WF-013` tuntas untuk mengunci daftar sumber final (`OD-03`). |
+| `WF-015` | Member A (Syahir) | `INDEPENDENT` | `M1`, `WF-003` | `Blocked` | `M2`–`M3` (`WF-007`–`WF-014`) | Rev Ramadan; bagian `M4` | Menunggu *Exit Gate* `M0` & `M1` sebelum membuat `.env.example` dan modul konfigurasi. |
+| `WF-016` | Member A (Syahir) | `INDEPENDENT` | `WF-015` | `Blocked` | `M2`–`M3` (`WF-007`–`WF-014`) | Rev Ramadan; bagian `M4` | Menunggu `WF-015` selesai & API key lokal Gemini/Groq siap di `.env`. |
+| `WF-017` | Member A (Syahir) | `INDEPENDENT` | `WF-016` | `Blocked` | `M2`–`M3` (`WF-007`–`WF-014`) | Handoff `H3` → Rev Ramadan; tutup `M4` & `OD-02` | Menunggu bukti tes API aktual `WF-016` (model dilarang dikunci sebelum tes). |
+| `WF-018` | Member B (Ramadan) | `PARALLEL-COORDINATION` | `M3` (`WF-012`, `WF-014`), `WF-005` | `Blocked` | Kerangka `WF-020` (pasca-`M4`) | Handoff `H4` (koord. integrasi dgn Syahir) → Rev Syahir | Menunggu `M3` selesai (`data/processed/` bersih + `DATA_DICTIONARY.md` final) & kesepakatan param *chunk* (`TD-03`). |
+| `WF-019` | Member A (Syahir) | `HANDOFF-BLOCKED` | `WF-018` (`H4`), `M4` (`WF-017`) | `Blocked` | — | Rev Ramadan; bagian `M5` | Menunggu *handoff* `chunks.jsonl` & `corpus_manifest.json` (`WF-018`) serta penutupan `M4`. |
+| `WF-020` | Member A (Syahir) | `INDEPENDENT` | `M4` (`WF-017`), `WF-019` | `Blocked` | Persiapan modul pasca-`M4` | Rev Ramadan; bagian `M5` | Menunggu `M4` (`WF-017`) & penyelarasan `prompt_version`/parameter identik dengan `WF-019`. |
+| `WF-021` | Bersama (Koord: Ramadan) | `JOINT` | `WF-018`, `WF-019`, `WF-020` | `Blocked` | — | Persetujuan bersama; tutup `M5` (*corpus freeze*) | Menunggu `WF-018`, `WF-019`, dan `WF-020` operasional untuk uji internal & penguncian `corpus_v1.0-frozen`. |
+| `WF-022` | Member A (Syahir) | `INDEPENDENT` | `M5` (`WF-019`), `WF-004` | `Blocked` | `M7` (`WF-027`–`WF-029`) | Rev Ramadan; bagian `M6` | Menunggu `M5` (*pipeline* RAG operasional & korpus *frozen*). |
+| `WF-023` | Member A (Syahir) | `INDEPENDENT` | `WF-006`, `WF-019`, `WF-022` | `Blocked` | `WF-024`, `WF-025`, `M7` | Rev Ramadan; bagian `M6` (+ uji FP/FN Safety Guard) | Menunggu `WF-022` & finalisasi desain keselamatan `WF-006`. |
+| `WF-024` | Member A (Syahir) | `INDEPENDENT` | `WF-022`, `M4` | `Blocked` | `WF-023`, `WF-025`, `M7` | Rev Ramadan; bagian `M6` | Menunggu `WF-022` & konfigurasi cadangan Groq dari `M4`. |
+| `WF-025` | Member A (Syahir) | `INDEPENDENT` | `WF-006`, `WF-019`, `WF-020` | `Blocked` | `WF-022`–`WF-024`, `M7` | Rev Ramadan; bagian `M6` | Menunggu `WF-006` (skema log final) & `M5` (`WF-019`, `WF-020`). |
+| `WF-026` | Member B (Ramadan) | `HANDOFF-BLOCKED` | `WF-022`, `WF-023`, `WF-024`, `WF-025` | `Blocked` | Finalisasi `M7` | Handoff `H5` (Syahir → Ramadan QA) → Rev Syahir; tutup `M6` | Menunggu seluruh komponen MVP (`WF-022`–`WF-025`) diserahkan Syahir untuk QA independen lintas perangkat. |
+| `WF-027` | Bersama | `JOINT` | `M5` (*corpus frozen*) | `Blocked` | `M6` (`WF-022`–`WF-025`) | Silang (A ↔ B); bagian `M7` | Menunggu `M5` (`corpus_v1.0-frozen`) agar 30 soal (10+10+5+5) + kasus darurat terjangkar korpus beku. |
+| `WF-028` | Bersama | `JOINT` | `WF-027`, `M5` | `Blocked` | `M6` (`WF-022`–`WF-025`) | Silang (A ↔ B); bagian `M7` | Menunggu 30 pertanyaan uji (`WF-027`) dan manifest `M5`. |
+| `WF-029` | Bersama (Koord: Ramadan) | `JOINT` | `WF-028` | `Blocked` | `WF-026` | Handoff `H6` (Persetujuan bersama); tutup `M7` & `OD-05` | Menunggu *ground truth* (`WF-028`) untuk mengunci `EVALUATION_PLAN.md` & rubrik sebelum eksperimen. |
+| `WF-030` | Member A (Syahir) | `HANDOFF-BLOCKED` | `M6`, `M7` (`H6`), `WF-020` | `Blocked` | — | Audit log oleh Ramadan; bagian `M8` | Menunggu `M6` (MVP & logger lulus QA) dan `M7` (30 soal + rubrik terkunci). |
+| `WF-031` | Member A (Syahir) | `INDEPENDENT` | `M6`, `M7`, `WF-030` | `Blocked` | — | Handoff `H7` → Audit log & korpus oleh Ramadan; bagian `M8` | Menunggu `WF-030` selesai agar Kondisi B berjalan pada model, `prompt_version`, & parameter 100% identik. |
+| `WF-032` | Syahir & Ramadan (terpisah) | `PARALLEL-COORDINATION` | `WF-030`, `WF-031` (`H7`), `WF-029` | `Blocked` | Penilaian A ∥ Penilaian B (independen) | 2 lembar skor terpisah → masuk `WF-033` | Menunggu log terverifikasi `H7` (`WF-030`–`WF-031`) & rubrik terkunci `WF-029`. |
+| `WF-033` | Bersama | `JOINT` | `WF-032`, `WF-028` | `Blocked` | — | Persetujuan bersama; bagian `M8` | Menunggu kedua lembar penilaian independen (`WF-032`) terisi 100%. |
+| `WF-034` | Bersama (Koord: Ramadan) | `JOINT` | `WF-033`, `WF-030`, `WF-031` | `Blocked` | — | Rev Syahir; tutup `M8` | Menunggu skor terekonsiliasi (`WF-033`) untuk menyusun *error analysis* aktual. |
+| `WF-035` | Bersama (Koord: Syahir) | `JOINT` | `M8` (`WF-034`) | `Blocked` | Persiapan bahan `WF-036` | Rev Ramadan; tutup `OD-01` | Menunggu hasil evaluasi aktual `M8` untuk menetapkan judul final & menyinkronkan seluruh `docs/`. |
+| `WF-036` | Bersama | `JOINT` | `WF-034`, `WF-035` | `Blocked` | `WF-037` | Review bersama; bagian `M9` | Menunggu hasil aktual `WF-034` & judul final `WF-035`. |
+| `WF-037` | Bersama (Op: Syahir; Verif: Ramadan) | `JOINT` | `M6`, `WF-035` | `Blocked` | `WF-036` | Verifikasi bersama; bagian `M9` | Menunggu `M6` & sinkronisasi panduan setup lokal `WF-035`. |
+| `WF-038` | Bersama | `JOINT` | `WF-035`, `WF-036`, `WF-037` | `Blocked` | — | Audit final bersama; tutup `M9` | Menunggu seluruh luaran `WF-035`–`WF-037` selesai. |
+| `WF-OPT-01` | Member B (Ramadan) | `INDEPENDENT` | `M6`, `WF-011` (Layak), izin jadwal | `Blocked` | Pasca-`M6` (tidak ganggu `M7`–`M9`) | Handoff `H8` → Rev Syahir; bagian `M-OPT` | Bersyarat: menunggu `M6` stabil, konfirmasi kelayakan `WF-011` (`SRC-TAB-001`–`003`), & tidak mengganggu `M7`–`M9`. |
+| `WF-OPT-02` | Member A (Syahir) | `HANDOFF-BLOCKED` | `WF-OPT-01` (`H8`), `M6` | `Blocked` | — | Rev Ramadan; bagian `M-OPT` | Menunggu dataset tabular BNPB bersih tervalidasi dari Ramadan (`WF-OPT-01`). |
+| `WF-OPT-03` | Member B (Ramadan) | `HANDOFF-BLOCKED` | `WF-OPT-02` | `Blocked` | — | Rev Syahir; tutup `M-OPT` | Menunggu modul statistik deterministik & integrasi UI dari Syahir (`WF-OPT-02`). |
+| `WF-OPT-04` | Member A (Syahir) | `INDEPENDENT` | `M8` selesai lebih awal & tidak ganggu `M9` | `Blocked` | — | Rev Ramadan; Opsional `Could` | Di luar jalur kritis; hanya dibuka jika `M8` tuntas lebih awal tanpa mengganggu `M9`. |

@@ -1,0 +1,9 @@
+# Dependensi minimum SiagaBanjir (MVP: Streamlit lokal + Gemini/Groq + LangChain selektif)
+# Selaras dengan starter dosen (Multazam) dan docs/PRD.md v0.3 / docs/ARCHITECTURE.md v0.2
+streamlit>=1.39.0
+langchain-core>=0.3.0
+langchain-google-genai>=2.0.0
+langchain-groq>=0.2.0
+requests>=2.31.0
+python-dotenv>=1.0.0
+pymupdf>=1.24.0
