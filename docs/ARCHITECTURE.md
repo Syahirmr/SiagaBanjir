@@ -1,11 +1,11 @@
 # Technical Architecture, Safety Protocol & Logging Design — SiagaBanjir
 
-> **Status Dokumen:** Draft v0.2 *(Revisi Review Teknis M1 — Menunggu Cross-Review Member B / Ramadan & Penutupan Gate M0)*  
-> **Tanggal Pembuatan:** 24 November 2026  
-> **PIC:** Member A (Syahir — LLM & Application Engineering)  
-> **Reviewer:** Member B (Ramadan — Data & Knowledge Preparation)  
-> **Cakupan Work ID:** `WF-004` (Architecture Design) & `WF-006` (Safety Protocol & Logging Design)  
-> **Acuan Utama:** [PRD.md](./PRD.md) (v0.3) | [TEAM_WORKFLOW.md](./TEAM_WORKFLOW.md) (v0.6) | [TODO.md](./TODO.md) (v0.6) | [DATA_DICTIONARY.md](./DATA_DICTIONARY.md) (v0.2)
+> **Status Dokumen:** Draft v0.3 *(Sinkronisasi Paritas `SafetyGuard` Pre/Post-Check 2×2 & Konfigurasi Baseline v1.3 — Menunggu Cross-Review Member B / Ramadan & Penutupan Gate M0)*<br>
+> **Tanggal Pembuatan:** 24 November 2026 *(Diperbarui: 28 November 2026)*<br>
+> **PIC:** Member A (Syahir — LLM & Application Engineering)<br>
+> **Reviewer:** Member B (Ramadan — Data & Knowledge Preparation)<br>
+> **Cakupan Work ID:** `WF-004` (Architecture Design) & `WF-006` (Safety Protocol & Logging Design)<br>
+> **Acuan Utama:** [PRD.md](./PRD.md) (v0.3) | [TEAM_WORKFLOW.md](./TEAM_WORKFLOW.md) (v0.6) | [TODO.md](./TODO.md) (v0.14) | [DATA_DICTIONARY.md](./DATA_DICTIONARY.md) (v0.2) | [BASELINE_SAFETY_AUDIT.md](./BASELINE_SAFETY_AUDIT.md)
 
 > **Catatan Batas Koordinasi Data:** `WF-005` dan `WF-007`–`WF-014` merupakan tanggung jawab **Member B (Ramadan)**, sedangkan `WF-018` (*chunking* & `corpus_manifest`) merupakan tanggung jawab **Ramadan** dengan koordinasi integrasi bersama **Syahir**. Seluruh referensi kontrak skema metadata/*chunk* dari [DATA_DICTIONARY.md](./DATA_DICTIONARY.md) di dokumen ini bersifat **rancangan awal sementara** dan **tidak dikunci secara sepihak** sebelum memperoleh persetujuan Ramadan.
 
@@ -122,12 +122,12 @@ flowchart TD
 8. **Citation Verification & Formatting (`FR-04`):** `Response Formatter` menyandingkan jawaban sintesis LLM dengan daftar rujukan deterministik dari metadata *chunk* yang benar-benar terambil (mencegah sitasi fiktif).
 9. **Logging & Tampilan (`FR-10`, `FR-11`):** `Structured Logger` menulis 1 baris JSONL tanpa kredensial; Streamlit menampilkan jawaban, daftar rujukan, *disclaimer* permanen, dan `corpus_version`.
 
-### 3.2 Mode Baseline LLM (`mode = "baseline"` — Kondisi A Eksperimen Pembanding)
-1. **Input diterima** dari `Evaluation Runner CLI` untuk 30 pertanyaan uji (`run_context="experiment"`, `allow_fallback=False`).
-2. **Tanpa Retrieval & Tanpa Korpus:** Jalur *retriever* dan `Evidence Gate` dilewati (`corpus_version=null`, `retrieved_sources=[]`, `retrieval_status="not_applicable"`).
-3. **Paritas Instruksi Dasar & Versi Prompt (`prompt_version`):** `Prompt Builder (Baseline)` menggunakan **instruksi sistem dasar dan kebijakan keselamatan umum yang setara** dengan Mode RAG (peran asisten edukasi kesiapsiagaan banjir berbahasa Indonesia yang jujur, tidak mengarang, dan non-darurat), dengan **satu perbedaan terkontrol**: ketiadaan blok `<retrieved_context>` dan instruksi sitasi korpus. Untuk menjamin paritas eksperimen, versi instruksi sistem pada kedua mode dicatat sebagai field `prompt_version` di log (mis. `prompt_v1.0`) sehingga Kondisi A dan Kondisi B memakai versi dasar yang terkendali dan terdokumentasi.
-4. **Panggilan API LLM Identik:** Menggunakan `provider`, `model_id`, dan `parameters` yang **persis sama** dengan Kondisi B (RAG).
-5. **Logging Terkontrol:** Mencatat `test_id`, `mode="baseline"`, `prompt_version`, `provider_actual`, `model_actual`, `parameters`, respons, status API, dan `latency_sec` ke file JSONL eksperimen terpisah.
+### 3.2 Mode Baseline LLM (`mode = "baseline"` — Kondisi A Eksperimen Pembanding & Demo)
+1. **Input diterima** dari `Evaluation Runner CLI` (`run_context="experiment"`, `allow_fallback=False`) atau Streamlit UI (`run_context="demo"`).
+2. **Paritas Safety Pre-Check & Post-Check (2×2):** Mode Baseline dan Mode RAG menjalankan `SafetyGuard.check()` (pre-check) serta `SafetyGuard.post_check()` (S3 zero-tolerance) secara **identik** baik pada `run_context="demo"` maupun `run_context="experiment"`, sehingga tidak ada celah keselamatan sepihak dan variabel pembeda eksperimen murni hanya *retrieval context* dan perilaku sitasi.
+3. **Tanpa Retrieval & Tanpa Korpus:** Jalur *retriever* dan `Evidence Gate` dilewati (`corpus_version=null`, `retrieved_sources=[]`, `citations_returned=[]`, `retrieval_status="not_applicable"`).
+4. **Paritas Instruksi Dasar & Versi Prompt (`prompt_version`):** `Prompt Builder (Baseline)` menggunakan **instruksi sistem dasar dan kebijakan keselamatan umum yang identik** dengan Mode RAG (terkini `prompt_v1.3`, dengan `prompt_v1.2` tetap tersimpan di `PROMPT_REGISTRY`), dengan **satu perbedaan terkontrol**: ketiadaan blok `<retrieved_context>` dan aturan sitasi korpus.
+5. **Panggilan API LLM & Logging Terkontrol:** Menggunakan `provider`, `model_id`, dan `parameters` yang **persis sama** dengan Kondisi B (RAG) dan mencatat log JSONL lengkap (`test_id`, `mode="baseline"`, `prompt_version`, `provider_actual`, `model_actual`, `parameters`, respons, status API, dan `latency_sec`).
 
 ---
 
@@ -137,7 +137,7 @@ flowchart TD
 |---|---|---|---|---|
 | **Streamlit UI (`app.py`)** | Antarmuka chat lokal, *disclaimer* keselamatan permanen, tampilan `corpus_version`, indikator proses, rendering sitasi & pesan error ramah. | Input teks pengguna, `ChatResponse`. | `ChatRequest`, tampilan chat lokal. | Tidak berisi logika *prompt*, *retrieval*, atau pemanggilan API langsung. |
 | **Config Loader (`src/config.py`)** | Memuat `.env` lokal (`GEMINI_API_KEY`, `GROQ_API_KEY`, konfigurasi provider/model, path korpus), validasi ketersediaan env. | `.env`, variabel lingkungan. | Objek `AppConfig` *(kredensial tidak dicetak/di-log)*. | Tidak pernah menuliskan kredensial ke log atau meng-hardcode key. |
-| **Safety Guard (`src/safety/guard.py`)** | Validasi input kosong, deteksi darurat akut, permintaan prediksi real-time, pertanyaan sangat ambigu, dan *out-of-domain* jelas. | `ChatRequest`. | `SafetyCheckResult` (+ respons khusus bila terpicu). | Tidak menggantikan evaluasi *groundedness* konteks; hanya penjaga gerbang awal. |
+| **Safety Guard (`src/safety/guard.py`)** | Pre-check kontekstual (input kosong, darurat akut/slang Indonesia terarah per bahaya, prediksi real-time, ambigu, hoaks/pengumuman palsu, *prompt injection/leak*, OOD) + post-check S3 zero-tolerance, identik pada matriks 2×2 (Baseline/RAG × demo/experiment). | `user_query`, `answer_text`. | `SafetyCheckResult`, `PostCheckResult`. | Tidak menggantikan evaluasi *groundedness* konteks; melindungi batas keselamatan deterministik. |
 | **Retriever (`src/retrieval/retriever.py`)** | Memuat manifest & indeks korpus *frozen*, mencari `top-k` *chunk*, menerapkan `Evidence Gate`, dan membedakan `empty` vs `retrieval_error`. | `user_query`, indeks korpus *frozen*. | `RetrievalResult` (list `RetrievedChunk`, status, skor). | **Read-only** terhadap `data/processed/`; tidak melakukan *web search*. |
 | **Prompt Builder (`src/llm/prompts.py`)** | Menyusun pesan *system* & *user* untuk mode `rag` (isolasi data `<retrieved_context>`, aturan sitasi & *abstention*) dan mode `baseline`. | `user_query`, `mode`, `RetrievedChunk[]`. | Struktur pesan siap kirim ke adapter LLM. | Tidak memanggil API secara langsung. |
 | **LLM Provider Adapter (`src/llm/client.py`)** | Abstraksi panggilan Gemini API (utama) dan Groq API (cadangan) memakai LangChain selektif, mengukur latensi, menerapkan aturan `allow_fallback`. | Pesan prompt, `LLMConfig`, `allow_fallback`. | `LLMCallResult` (`provider_actual`, `model_actual`, latensi, status, error). | **Melarang *silent fallback*** saat `allow_fallback=False` (mode eksperimen). |
@@ -163,13 +163,14 @@ flowchart TD
   PRIMARY_MODEL=TBD_AFTER_WF016
   FALLBACK_MODEL=TBD_AFTER_WF016
   LLM_TEMPERATURE=0.1
-  LLM_MAX_TOKENS=768
+  LLM_MAX_TOKENS=1400
   LLM_TIMEOUT_SEC=30
+  PROMPT_VERSION=prompt_v1.3
   GEMINI_API_KEY=your_gemini_api_key_here
   GROQ_API_KEY=your_groq_api_key_here
   CORPUS_MANIFEST_PATH=data/processed/corpus_manifest.json
   ```
-  *(Nilai `LLM_TEMPERATURE`, `LLM_MAX_TOKENS`, dan `LLM_TIMEOUT_SEC` di atas berstatus **nilai awal sementara** untuk konsistensi faktual/rendah halusinasi dan dapat disesuaikan setelah `WF-016`–`WF-017`.)*
+  *(Catatan: `LLM_MAX_TOKENS=1400` dan `PROMPT_VERSION=prompt_v1.3` dipakai identik pada Baseline & RAG agar respons multi-fase tidak terpotong; pada uji `gemini-3.5-flash-lite`, provider menggunakan *fixed sampling defaults* sehingga `temperature` diabaikan — didokumentasikan transparan untuk reproduksibilitas.)*
 - **Aturan Fallback Terkontrol:**
   - Pada **`run_context = "demo"` (Streamlit):** jika Gemini mengembalikan `rate_limit`, `timeout`, atau `service_unavailable`, adapter dapat beralih ke Groq (`fallback_used=True`) dengan menampilkan catatan transparan kecil bahwa respons dilayani oleh provider cadangan. Jika kedua provider gagal, UI menampilkan pesan kesalahan informatif tanpa *crash* dan tanpa *stack trace*.
   - Pada **`run_context = "experiment"` (Baseline vs RAG):** `allow_fallback` **wajib `False`**. Kegagalan API dicatat sebagai `api_error` agar eksperimen tidak tercemar oleh pergantian model secara diam-diam.

@@ -103,7 +103,7 @@ class AppConfig:
     llm_temperature: float = 0.1
     llm_max_tokens: int = 1400
     llm_timeout_sec: int = 30
-    prompt_version: str = "prompt_v1.2"
+    prompt_version: str = "prompt_v1.3"
     corpus_manifest_path: Path = Path("data/processed/corpus_manifest.json")
     corpus_chunks_path: Path = Path("data/processed/chunks.jsonl")
     retrieval_top_k: int = 4
@@ -231,7 +231,7 @@ def load_config(
         llm_temperature=_parse_float(get("LLM_TEMPERATURE"), 0.1),
         llm_max_tokens=_parse_int(get("LLM_MAX_TOKENS"), 1400),
         llm_timeout_sec=_parse_int(get("LLM_TIMEOUT_SEC"), 30),
-        prompt_version=get("PROMPT_VERSION", "prompt_v1.2") or "prompt_v1.2",
+        prompt_version=get("PROMPT_VERSION", "prompt_v1.3") or "prompt_v1.3",
         corpus_manifest_path=Path(
             get("CORPUS_MANIFEST_PATH", "data/processed/corpus_manifest.json")
             or "data/processed/corpus_manifest.json"

@@ -22,7 +22,7 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Any
 
-from src.config import AppConfig, load_config
+from src.config import AppConfig, get_file_mtime, load_config, resolve_env_path
 from src.llm.client import LLMProviderAdapter
 from src.llm.prompts import BASE_SYSTEM_INSTRUCTION
 from src.logging.eval_logger import StructuredJsonlLogger
@@ -92,8 +92,13 @@ def corpus_status_label(config: AppConfig, retriever: BM25CorpusRetriever | None
 
 
 def format_assistant_markdown(response: ChatResponse) -> str:
-    """Memformat respons akhir beserta daftar sitasi deterministik & notice."""
-    sections = [response.answer_text.strip()]
+    """Memformat respons akhir beserta badge mode, sitasi deterministik & notice."""
+    mode_badge = (
+        "**[Mode Baseline — Tanpa Retrieval]**"
+        if response.mode == "baseline"
+        else "**[Mode RAG — Korpus Resmi]**"
+    )
+    sections = [f"{mode_badge}\n\n{response.answer_text.strip()}"]
     if response.citations:
         cite_lines = "\n".join(f"- {c}" for c in response.citations)
         sections.append(f"**Rujukan Sumber Resmi:**\n{cite_lines}")
@@ -151,13 +156,20 @@ def run_app(
     if config_override is not None and service_override is not None:
         config, service = config_override, service_override
     else:
+        env_mtime = get_file_mtime(resolve_env_path(".env"))
+        cfg_preview = load_config()
+        manifest_mtime = get_file_mtime(cfg_preview.corpus_manifest_path)
+
         @st.cache_resource
-        def _get_service() -> tuple[AppConfig, ChatService]:
+        def _get_service(_env_mtime: float, _manifest_mtime: float) -> tuple[AppConfig, ChatService]:
             cfg = load_config()
             return cfg, build_runtime_service(cfg)
 
-        config, service = _get_service()
+        config, service = _get_service(env_mtime, manifest_mtime)
 
+    corpus_available = (
+        config.corpus_manifest_path.is_file() and config.corpus_chunks_path.is_file()
+    )
     corpus_label = corpus_status_label(config, service.retriever)
 
     # Header & disclaimer (adaptasi langsung dari pola st.title + st.markdown Multazam)
@@ -168,21 +180,30 @@ def run_app(
     )
     st.warning(PERMANENT_SAFETY_DISCLAIMER)
 
+    # Pola st.session_state["chat_history"] dari starter Multazam
+    if "chat_history" not in st.session_state:
+        st.session_state["chat_history"] = init_chat_history()
+
     with st.sidebar:
         st.subheader("Pengaturan & Status Sistem")
         selected_mode: ModeType = st.radio(
             "Mode Eksekusi",
             options=["rag", "baseline"],
-            index=0,
+            index=0 if corpus_available else 1,
             format_func=lambda m: (
                 "RAG (Korpus Resmi)" if m == "rag" else "Baseline (Tanpa Retrieval)"
             ),
         )
         st.markdown(f"- **Status Korpus:** `{corpus_label}`")
         st.markdown(f"- **Provider Utama:** `{config.primary_provider}`")
+        st.markdown(f"- **Model Utama (Lokal):** `{config.primary_model}`")
         st.markdown(f"- **Provider Cadangan (Demo):** `{config.fallback_provider}`")
-        st.markdown(f"- **Model Utama:** `{config.primary_model}`")
+        st.markdown(f"- **Model Cadangan (Demo):** `{config.fallback_model}`")
         st.markdown(f"- **Versi Prompt:** `{config.prompt_version}`")
+        st.caption(
+            "Catatan: Penetapan model final (OD-02) menunggu persetujuan tim; "
+            "eksperimen Baseline vs RAG tetap menonaktifkan fallback diam-diam."
+        )
 
         issues = config.validate_for_runtime(require_corpus=(selected_mode == "rag"))
         if issues:
@@ -191,11 +212,19 @@ def run_app(
             )
         if st.button("Bersihkan Riwayat Chat"):
             st.session_state["chat_history"] = init_chat_history()
+            st.session_state["last_selected_mode"] = selected_mode
             st.rerun()
 
-    # Pola st.session_state["chat_history"] dari starter Multazam
-    if "chat_history" not in st.session_state:
-        st.session_state["chat_history"] = init_chat_history()
+    # Beri tahu pengguna jika berpindah mode sementara riwayat lama masih tampil
+    prev_mode = st.session_state.get("last_selected_mode")
+    has_prior_turns = len(st.session_state["chat_history"]) > 1
+    if prev_mode is not None and prev_mode != selected_mode and has_prior_turns:
+        st.info(
+            f"Mode berubah dari **{prev_mode.upper()}** ke **{selected_mode.upper()}**. "
+            "Pesan lama di bawah tetap menampilkan label modenya masing-masing; "
+            "klik **Bersihkan Riwayat Chat** di sidebar bila ingin memulai sesi bersih."
+        )
+    st.session_state["last_selected_mode"] = selected_mode
 
     # Render histori percakapan (lewati SystemMessage seperti di Multazam)
     for chat in st.session_state["chat_history"]:

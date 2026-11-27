@@ -22,7 +22,7 @@ class TestResponseQualityAndRegression(unittest.TestCase):
         self.guard = SafetyGuard()
 
     def test_prompt_v1_2_enforces_natural_conversation_and_conservative_safety(self) -> None:
-        self.assertEqual(DEFAULT_PROMPT_VERSION, "prompt_v1.2")
+        self.assertEqual(DEFAULT_PROMPT_VERSION, "prompt_v1.3")
         low = BASE_SYSTEM_INSTRUCTION.lower()
         # Tidak mengulang salam/disclaimer & langsung jawab
         self.assertIn("jangan mengulang salam pembuka", low)
@@ -31,15 +31,15 @@ class TestResponseQualityAndRegression(unittest.TestCase):
         # Klarifikasi input ambigu 1 kata (FR-08)
         self.assertIn("klarifikasi singkat", low)
         # Keselamatan P0: air banjir, urutan evakuasi, listrik, terjebak lantai atas, air minum
-        self.assertIn("panel listrik", low)
-        self.assertIn("terendam air", low)
-        self.assertIn("jangan otomatis menyuruh naik ke atap/genteng", low)
+        self.assertIn("panel", low)
+        self.assertIn("basah/terendam", low)
+        self.assertIn("jangan otomatis naik ke atap/genteng", low)
         self.assertIn("jangan mengklaim perebusan menghilangkan kontaminan kimia", low)
         # Larangan angka/dosis/sitasi palsu tanpa bukti & P1 akurasi
-        self.assertIn("batas kedalaman air", low)
-        self.assertIn("dosis/terapi obat", low)
+        self.assertIn("tidak ada ketinggian air", low)
+        self.assertIn("resep/dosis", low)
         self.assertIn("jangan menyarankan mi instan", low)
-        self.assertIn("jangan mencantumkan penanda [sumber n]", low)
+        self.assertIn("jangan mencantumkan [sumber n]", low)
         # Multi-fase terstruktur
         self.assertIn("sebelum banjir, saat banjir, setelah banjir", low)
 

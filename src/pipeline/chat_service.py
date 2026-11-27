@@ -164,7 +164,7 @@ class ChatService:
         """Menjalankan 1 permintaan secara end-to-end dan mencatat log jika aktif."""
         started = time.perf_counter()
 
-        # 1. Jalur Baseline (Kondisi A Eksperimen — tanpa retrieval & tanpa safety override khusus RAG)
+        # 1. Jalur Baseline (Kondisi A — tanpa retrieval, SafetyGuard pre/post-check identik dengan RAG)
         if request.mode == "baseline":
             return self._handle_baseline(request, started)
 
@@ -284,23 +284,32 @@ class ChatService:
             self._write_log(request, response, retrieval=retrieval, llm_result=llm_res)
             return response
 
-        # 5. Verifikasi sitasi deterministik (FR-04)
-        citations_returned, anomalies = verify_and_extract_citations(
-            answer_text=llm_res.raw_text,
-            retrieved_chunks=retrieval.chunks,
-        )
+        # 5. Post-check S3 (aktif di demo & experiment) & Verifikasi sitasi deterministik (FR-04)
+        final_text = llm_res.raw_text
         notice = None
         if llm_res.fallback_used:
             notice = (
                 f"Catatan: Respons dilayani oleh provider cadangan "
                 f"({llm_res.provider_actual}) karena provider utama sedang terkendala."
             )
+        post = self.safety_guard.post_check(final_text)
+        if not post.passed and post.corrected_text:
+            final_text = post.corrected_text
+            post_note = (
+                f"Catatan keselamatan: post-check memblokir keluaran berisiko ({', '.join(post.violations)})."
+            )
+            notice = f"{notice} {post_note}".strip() if notice else post_note
+
+        citations_returned, anomalies = verify_and_extract_citations(
+            answer_text=final_text,
+            retrieved_chunks=retrieval.chunks,
+        )
 
         response = ChatResponse(
             request_id=request.request_id,
             mode="rag",
             outcome_type="answered_grounded",
-            answer_text=llm_res.raw_text,
+            answer_text=final_text,
             citations=citations_returned,
             retrieved_sources=retrieved_summary,
             citation_anomalies=anomalies,
@@ -322,16 +331,27 @@ class ChatService:
         retrieval_na = RetrievalResult(
             status="not_applicable", corpus_version=None, chunks=[]
         )
-        if not request.user_query or not request.user_query.strip():
+        # Paritas keselamatan Baseline vs RAG: SafetyGuard pre-check & post-check
+        # aktif identik di demo maupun experiment; perbedaan eksperimen hanya
+        # retrieval context dan perilaku sitasi.
+        safety = self.safety_guard.check(request.user_query)
+        if safety.bypass_llm:
+            outcome = _SAFETY_OUTCOME_MAP[safety.category]
             response = ChatResponse(
                 request_id=request.request_id,
                 mode="baseline",
-                outcome_type="clarification_requested",
-                answer_text="Pertanyaan kosong.",
-                safety_category="empty_input",
+                outcome_type=outcome,
+                answer_text=safety.override_message or "",
+                citations=[],
+                retrieved_sources=[],
+                safety_category=safety.category,
                 corpus_version=None,
                 prompt_version=self.config.prompt_version,
+                provider_actual=None,
+                model_actual=None,
+                fallback_used=False,
                 api_status="bypassed",
+                error_type=None,
                 latency_sec=round(time.perf_counter() - started, 4),
             )
             self._write_log(request, response, retrieval=retrieval_na, llm_result=None)
@@ -365,11 +385,26 @@ class ChatService:
             self._write_log(request, response, retrieval=retrieval_na, llm_result=llm_res)
             return response
 
+        final_text = llm_res.raw_text
+        notice = None
+        if llm_res.fallback_used:
+            notice = (
+                f"Catatan: Respons dilayani oleh provider cadangan "
+                f"({llm_res.provider_actual}) karena provider utama sedang terkendala."
+            )
+        post = self.safety_guard.post_check(final_text)
+        if not post.passed and post.corrected_text:
+            final_text = post.corrected_text
+            post_note = (
+                f"Catatan keselamatan: post-check memblokir keluaran berisiko ({', '.join(post.violations)})."
+            )
+            notice = f"{notice} {post_note}".strip() if notice else post_note
+
         response = ChatResponse(
             request_id=request.request_id,
             mode="baseline",
             outcome_type="answered_baseline",
-            answer_text=llm_res.raw_text,
+            answer_text=final_text,
             citations=[],
             retrieved_sources=[],
             safety_category="normal",
@@ -381,6 +416,7 @@ class ChatService:
             api_status="success",
             error_type=None,
             latency_sec=round(time.perf_counter() - started, 4),
+            user_notice=notice,
         )
         self._write_log(request, response, retrieval=retrieval_na, llm_result=llm_res)
         return response
