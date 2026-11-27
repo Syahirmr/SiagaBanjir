@@ -1,7 +1,7 @@
 # Context Recovery Snapshot — SiagaBanjir
 
-> **Status Dokumen:** Draft v0.8 *(Track Syahir Siap Cross-Review: Keamanan `.env` Terverifikasi, 22/22 Test Lulus, Live API & E2E Baseline Teruji — Menunggu Ramadan & `OD-02`)*  
-> **Terakhir Diperbarui:** 27 November 2026  
+> **Status Dokumen:** Draft v0.9 *(Sinkronisasi Pasca-Push `8efa5d2` di `origin/syahir` — Siap Pembuatan PR `syahir → master`)*  
+> **Terakhir Diperbarui:** 28 November 2026  
 > **Referensi Utama:** [PRD.md](./PRD.md) (v0.3) | [TEAM_WORKFLOW.md](./TEAM_WORKFLOW.md) (v0.6) | [TODO.md](./TODO.md) (v0.9) | [DATA_DICTIONARY.md](./DATA_DICTIONARY.md) (v0.2) | [ARCHITECTURE.md](./ARCHITECTURE.md) (v0.2)  
 > **Repository GitHub:** [Syahirmr/SiagaBanjir](https://github.com/Syahirmr/SiagaBanjir)
 
@@ -65,7 +65,7 @@ Sebelum melakukan pekerjaan apa pun pada sesi baru, AI/agent **wajib**:
 ## 5. Struktur Dokumen & Folder Penting
 
 - **Dokumen `docs/`:**
-  - Tersedia: [PRD.md](./PRD.md) (v0.3), [TEAM_WORKFLOW.md](./TEAM_WORKFLOW.md) (v0.6 — memuat aturan operasional *handoff*/eksekusi Bag. `G.4`), [TODO.md](./TODO.md) (v0.9 — memuat *Execution Readiness & Dependency Map* 42 Work ID di Bag. 6 & status track Syahir), [DATA_DICTIONARY.md](./DATA_DICTIONARY.md) (v0.2 — artefak audit awal siap review Ramadan), [ARCHITECTURE.md](./ARCHITECTURE.md) (v0.2 — draf revisi `WF-004` & `WF-006` oleh Syahir, siap review Ramadan), [context_windows.md](./context_windows.md) (v0.8), `pert14/` (`tugas pertemuan 14.docx` terisi & `JAWABAN_PERTEMUAN14_SIAGABANJIR.md`), serta referensi `BIG PROJECT.jpeg`.
+  - Tersedia: [PRD.md](./PRD.md) (v0.3), [TEAM_WORKFLOW.md](./TEAM_WORKFLOW.md) (v0.6 — memuat aturan operasional *handoff*/eksekusi Bag. `G.4`), [TODO.md](./TODO.md) (v0.9 — memuat *Execution Readiness & Dependency Map* 42 Work ID di Bag. 6 & status track Syahir), [DATA_DICTIONARY.md](./DATA_DICTIONARY.md) (v0.2 — artefak audit awal siap review Ramadan), [ARCHITECTURE.md](./ARCHITECTURE.md) (v0.2 — draf revisi `WF-004` & `WF-006` oleh Syahir, siap review Ramadan), [context_windows.md](./context_windows.md) (v0.9), serta referensi `BIG PROJECT.jpeg`. *(Catatan: folder lokal `docs/pert14/` berisi tugas Pertemuan 14 dipertahankan secara lokal/untracked dan tidak dimasukkan ke PR utama.)*
   - *Planned Document* (belum dibuat): `EVALUATION_PLAN.md` (`M7`).
 - **Folder & File Root:**
   - `data/raw/` — sudah ada (**8 berkas mentah: 2 edukasi + 6 Excel BNPB**); **read-only, tidak boleh ditimpa**.
@@ -85,9 +85,9 @@ Sebelum melakukan pekerjaan apa pun pada sesi baru, AI/agent **wajib**:
 
 ---
 
-## 7. Status Terakhir Milestone, Work ID, Implementasi & Blocker *(per 27 Nov 2026)*
+## 7. Status Terakhir Milestone, Work ID, Implementasi & Blocker *(per 28 Nov 2026)*
 
-- **Git & Branch:** Terpublikasi di [Syahirmr/SiagaBanjir](https://github.com/Syahirmr/SiagaBanjir) dengan `master`, `syahir`, dan `ramadan` pada commit fondasi `c870f71`. Perubahan lokal di branch **`syahir`** mencakup `M .gitignore`, `M docs/TEAM_WORKFLOW.md`, `M docs/TODO.md`, `M docs/context_windows.md`, serta untracked `.env.example`, `app.py`, `requirements.txt`, `docs/ARCHITECTURE.md`, `docs/pert14/`, `scripts/`, `src/`, `tests/` *(belum di-commit/push)*.
+- **Git & Branch:** Terpublikasi di [Syahirmr/SiagaBanjir](https://github.com/Syahirmr/SiagaBanjir). Branch `master` & `ramadan` berada pada commit fondasi `c870f71`; branch **`syahir`** sudah dipush dan sinkron dengan `origin/syahir` pada commit **`8efa5d2`** (`feat: implement SiagaBanjir chatbot foundation`, 29 berkas — terverifikasi bebas `.env`, bebas kredensial, bebas cache/log demo pribadi, dan `logs/api_test_results.jsonl` aman dibagikan). **Pull Request `syahir → master` belum dibuat dan belum di-merge.** Folder `docs/pert14/` tetap disimpan lokal (*untracked*) dan terpisah dari PR utama.
 - **Milestone:** `M0`–`M6` = **`In Progress`** *(M4–M6 baru tahap implementasi modul independen Syahir; belum lulus Exit Gate)*; `M7`–`M9` & `M-OPT` = **`Not Started`**.
 - **Work ID (42 total):**
   - *Progress Status:* `20` `In Progress` (`WF-001`–`WF-011`, plus 9 item track Syahir: `WF-015`–`WF-017`, `WF-019`–`WF-020`, `WF-022`–`WF-025`), `22` `Not Started`, `0` `Blocked`, `0` `Completed`.
@@ -141,6 +141,6 @@ Sebelum melakukan pekerjaan apa pun pada sesi baru, AI/agent **wajib**:
 
 ## 9. Langkah Konkret Berikutnya
 
-1. **Syahir (Siap Commit & Push Branch `syahir` untuk Cross-Review):** Branch `syahir` sudah bersih dari kebocoran kredensial dan lulus 22/22 test + live verifikasi; Syahir dapat melakukan *commit* & *push* ke `origin/syahir`, membuka Pull Request ke `master`, lalu mengirim permintaan *cross-review* ke Ramadan (mencakup `ARCHITECTURE.md` v0.2, implementasi `app.py`/`src/`/`scripts/`/`tests/`, serta usulan `OD-02`: Primary `gemini-3.5-flash-lite` & Fallback `openai/gpt-oss-20b`).
+1. **Syahir (Buat Pull Request `syahir → master` untuk Cross-Review):** Branch `syahir` (`8efa5d2` + sinkronisasi `context_windows.md` v0.9) sudah dipush ke `origin/syahir`, bersih dari kredensial, dan lulus 22/22 test + live verifikasi; buka Pull Request `syahir → master` di GitHub (tanpa memasukkan `docs/pert14/` lokal) lalu kirim permintaan *cross-review* ke Ramadan (mencakup `ARCHITECTURE.md` v0.2, implementasi `app.py`/`src/`/`scripts/`/`tests/`, serta usulan `OD-02`: Primary `gemini-3.5-flash-lite` & Fallback `openai/gpt-oss-20b`).
 2. **Ramadan (Tutup `M0`, Review `M1`–`M3a` & Handoff Korpus `WF-018` di branch `ramadan`):** Lakukan `git clone`, berpindah ke `ramadan`, catat persetujuan `M0` di [TODO.md](./TODO.md) Bag. 5.1, tinjau PR Syahir & konfirmasi `OD-02`, finalisasi [DATA_DICTIONARY.md](./DATA_DICTIONARY.md) (`WF-005`, `WF-007`–`WF-011`), lalu selesaikan `WF-012`–`WF-014` & `WF-018` (`data/processed/chunks.jsonl` + `corpus_manifest.json`).
 3. **Integrasi `M5` (*Corpus Freeze*) → `M6`–`M8`:** Begitu korpus Ramadan tersedia, hubungkan ke `BM25CorpusRetriever`, lakukan uji internal *retrieval* & *corpus freeze* (`WF-021`), lanjutkan QA lintas perangkat (`WF-026`), kunci 30 soal + rubrik (`M7`), dan jalankan eksperimen Baseline vs RAG (`scripts/run_eval.py`).
