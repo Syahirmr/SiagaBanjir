@@ -26,12 +26,20 @@ EMERGENCY_OVERRIDE_MESSAGE = (
     "SiagaBanjir adalah prototipe chatbot edukasi akademik dan **bukan layanan "
     "darurat maupun pengganti petugas resmi**. Chatbot ini tidak dapat memberikan "
     "rute atau keputusan evakuasi untuk lokasi Anda secara langsung.\n\n"
-    "Segera utamakan keselamatan diri Anda dan orang di sekitar, ikuti arahan "
-    "petugas di lapangan, dan hubungi layanan darurat atau otoritas resmi setempat:\n"
+    "Segera utamakan keselamatan diri Anda dan orang di sekitar, lalu hubungi "
+    "layanan darurat atau otoritas resmi setempat dengan menyampaikan **alamat/"
+    "lokasi jelas serta jumlah orang yang terjebak atau membutuhkan bantuan**:\n"
     "- **112** — Nomor Darurat Nasional *(jika layanan tersedia di wilayah Anda)*\n"
     "- **115** — Basarnas (pencarian dan pertolongan)\n"
     "- **BPBD** (Badan Penanggulangan Bencana Daerah) atau **BNPB** setempat\n"
-    "- Perangkat RT/RW, relawan, atau aparat keamanan terdekat di lokasi Anda."
+    "- Perangkat RT/RW, relawan, atau aparat keamanan terdekat di lokasi Anda.\n\n"
+    "Sambil menunggu pertolongan:\n"
+    "- Pertahankan posisi di tempat tinggi yang aman dan **ikuti instruksi "
+    "petugas penyelamat**.\n"
+    "- Beri tanda keberadaan menggunakan senter, kain terang, atau peluit bila aman.\n"
+    "- **Jangan memasuki air atau arus banjir** untuk menyelamatkan diri, "
+    "**jangan otomatis naik ke atap/genteng** tanpa kondisi aman atau arahan "
+    "petugas, dan jauhi instalasi listrik yang basah atau terendam."
 )
 
 PREDICTION_REFUSAL_MESSAGE = (
@@ -64,6 +72,14 @@ OUT_OF_DOMAIN_MESSAGE = (
     "Silakan ajukan pertanyaan yang berkaitan dengan kesiapsiagaan banjir, "
     "misalnya persiapan sebelum musim hujan, isi Tas Siaga Bencana, atau "
     "langkah aman setelah banjir surut."
+)
+
+FAKE_ANNOUNCEMENT_REFUSAL_MESSAGE = (
+    "SiagaBanjir tidak dapat membuat pengumuman palsu, hoaks, atau simulasi "
+    "penetapan status darurat atas nama instansi resmi mana pun.\n\n"
+    "Untuk informasi resmi mengenai status darurat, peringatan dini, dan "
+    "prakiraan cuaca, silakan merujuk langsung ke kanal resmi **BNPB** (Badan "
+    "Nasional Penanggulangan Bencana), **BPBD** setempat, dan **BMKG**."
 )
 
 # Pola pertanyaan edukatif umum (untuk mencegah false positive darurat akut)
@@ -113,7 +129,9 @@ _ACUTE_EMERGENCY_RULES: tuple[tuple[str, re.Pattern[str]], ...] = (
         re.compile(
             r"\b(ada yang|orang|anak saya|keluarga saya|tetangga saya|saya|kami)\b.{0,30}"
             r"\b(hanyut|tenggelam|kesetrum|tersengat listrik|luka parah|pingsan|hilang terbawa arus)\b"
-            r"|\b(tersengat listrik|kesetrum|hanyut)\b.{0,20}\b(sekarang|saat ini|barusan|tolong)\b",
+            r"|\b(tersengat listrik|kesetrum|hanyut)\b.{0,20}\b(sekarang|saat ini|barusan|tolong)\b"
+            r"|\b(panel listrik|mcb|stopkontak)\b.{0,35}\b(terendam|tergenang|percikan|konslet|korslet)\b"
+            r".{0,30}\b(sekarang|saat ini|tolong|rumah saya)\b",
             re.IGNORECASE,
         ),
     ),
@@ -124,10 +142,12 @@ _PREDICTION_RULES: tuple[tuple[str, re.Pattern[str]], ...] = (
     (
         "prediction_will_flood",
         re.compile(
-            r"\b(apakah|apa|kira[- ]?kira|bakal|akan|prediksi|ramalan|prakiraan)\b.{0,35}"
-            r"\b(besok|hari ini|malam ini|nanti malam|minggu ini|sebentar lagi|sekarang|jam berapa)\b.{0,35}"
+            r"\b(apakah|apa|kira[- ]?kira|bakal|akan|prediksi|ramalan|prakiraan|"
+            r"bisakah|bisa|dapatkah|memastikan|pastikan|menjamin|pasti)\b.{0,40}"
+            r"\b(besok|hari ini|malam ini|nanti malam|minggu ini|sebentar lagi|sekarang|jam berapa)\b.{0,40}"
             r"\b(banjir|meluap|hujan deras|air naik|genangan|siaga)\b"
-            r"|\b(apakah|apa)\b.{0,35}\b(banjir|meluap)\b.{0,25}\b(besok|hari ini|malam ini|nanti|sekarang)\b",
+            r"|\b(apakah|apa|bisakah|bisa|dapatkah|memastikan|pastikan)\b.{0,35}"
+            r"\b(banjir|meluap)\b.{0,25}\b(besok|hari ini|malam ini|nanti|sekarang)\b",
             re.IGNORECASE,
         ),
     ),
@@ -141,6 +161,26 @@ _PREDICTION_RULES: tuple[tuple[str, re.Pattern[str]], ...] = (
             re.IGNORECASE,
         ),
     ),
+)
+
+# 2b. Pola permintaan pembuatan pengumuman resmi palsu / hoaks instansi
+_FAKE_ANNOUNCEMENT_RE = re.compile(
+    r"\b(buat|buatkan|bikinkan|tulis|tuliskan|karang|susun)\b.{0,45}"
+    r"\b(pengumuman|peringatan|berita|pesan|siaran pers|surat|status darurat)\b.{0,35}"
+    r"\b(palsu|hoaks|hoax|bohong|seolah[- ]?olah|mengatasnamakan)\b"
+    r"|\b(pengumuman palsu|hoaks|hoax|peringatan palsu)\b.{0,45}"
+    r"\b(bnpb|bpbd|bmkg|basarnas|pemerintah|darurat|banjir)\b",
+    re.IGNORECASE,
+)
+
+# Istilah edukasi banjir spesifik yang tetap jelas meski diketik singkat (2 kata)
+_SPECIFIC_SHORT_FLOOD_QUERY_RE = re.compile(
+    r"\b("
+    r"tas siaga|tsb|inarisk|dibi|pentahelix|dana siap pakai|dsp|"
+    r"pascabanjir|pasca banjir|prabencana|pra bencana|persiapan banjir|"
+    r"listrik banjir|leptospirosis|drainase|selokan|saluran air"
+    r")\b",
+    re.IGNORECASE,
 )
 
 # 3. Pola input sangat singkat / ambigu (FR-08)
@@ -250,6 +290,15 @@ class SafetyGuard:
                     matched_rule=rule_name,
                 )
 
+        # 2b. Permintaan pembuatan pengumuman resmi palsu / hoaks instansi
+        if _FAKE_ANNOUNCEMENT_RE.search(raw):
+            return SafetyCheckResult(
+                category="out_of_domain",
+                bypass_llm=True,
+                override_message=FAKE_ANNOUNCEMENT_REFUSAL_MESSAGE,
+                matched_rule="fake_official_announcement",
+            )
+
         # 3. Input sangat singkat / ambigu (FR-08)
         tokens = norm.split()
         if not tokens:
@@ -260,7 +309,9 @@ class SafetyGuard:
                 matched_rule="punctuation_only",
             )
         if norm in _AMBIGUOUS_EXACT or (
-            len(tokens) <= 2 and not _OUT_OF_DOMAIN_RE.search(raw)
+            len(tokens) <= 2
+            and not _OUT_OF_DOMAIN_RE.search(raw)
+            and not _SPECIFIC_SHORT_FLOOD_QUERY_RE.search(raw)
         ):
             return SafetyCheckResult(
                 category="ambiguous",

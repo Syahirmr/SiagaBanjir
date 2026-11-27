@@ -15,6 +15,29 @@ from typing import Mapping
 
 PLACEHOLDER_MODEL_PREFIX = "TBD_"
 PLACEHOLDER_KEY_MARKERS = ("your_", "replace_me", "changeme", "example")
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
+
+def resolve_env_path(env_file: str | Path | None = ".env") -> Path | None:
+    """Menyelesaikan path `.env` secara konsisten terhadap root proyek."""
+    if env_file is None:
+        return None
+    p = Path(env_file)
+    if p.is_absolute():
+        return p
+    if p.is_file():
+        return p.resolve()
+    return (PROJECT_ROOT / p).resolve()
+
+
+def get_file_mtime(path: Path | None) -> float:
+    """Mengembalikan mtime berkas untuk invalidasi cache Streamlit (0.0 jika tidak ada)."""
+    if path is None or not path.is_file():
+        return 0.0
+    try:
+        return path.stat().st_mtime
+    except OSError:
+        return 0.0
 
 _SECRET_PATTERNS = (
     re.compile(r"AIza[0-9A-Za-z_\-]{10,}"),
@@ -78,9 +101,9 @@ class AppConfig:
     primary_model: str = "TBD_AFTER_WF016"
     fallback_model: str = "TBD_AFTER_WF016"
     llm_temperature: float = 0.1
-    llm_max_tokens: int = 768
+    llm_max_tokens: int = 1400
     llm_timeout_sec: int = 30
-    prompt_version: str = "prompt_v1.0"
+    prompt_version: str = "prompt_v1.2"
     corpus_manifest_path: Path = Path("data/processed/corpus_manifest.json")
     corpus_chunks_path: Path = Path("data/processed/chunks.jsonl")
     retrieval_top_k: int = 4
@@ -187,8 +210,9 @@ def load_config(
     Prioritas: variabel lingkungan proses > file `.env` > default aman.
     """
     file_vals: dict[str, str] = {}
-    if env_file is not None:
-        file_vals = parse_env_file(Path(env_file))
+    resolved_env = resolve_env_path(env_file)
+    if resolved_env is not None:
+        file_vals = parse_env_file(resolved_env)
 
     env_source = os.environ if environ is None else environ
 
@@ -205,9 +229,9 @@ def load_config(
         primary_model=get("PRIMARY_MODEL", "TBD_AFTER_WF016") or "TBD_AFTER_WF016",
         fallback_model=get("FALLBACK_MODEL", "TBD_AFTER_WF016") or "TBD_AFTER_WF016",
         llm_temperature=_parse_float(get("LLM_TEMPERATURE"), 0.1),
-        llm_max_tokens=_parse_int(get("LLM_MAX_TOKENS"), 768),
+        llm_max_tokens=_parse_int(get("LLM_MAX_TOKENS"), 1400),
         llm_timeout_sec=_parse_int(get("LLM_TIMEOUT_SEC"), 30),
-        prompt_version=get("PROMPT_VERSION", "prompt_v1.0") or "prompt_v1.0",
+        prompt_version=get("PROMPT_VERSION", "prompt_v1.2") or "prompt_v1.2",
         corpus_manifest_path=Path(
             get("CORPUS_MANIFEST_PATH", "data/processed/corpus_manifest.json")
             or "data/processed/corpus_manifest.json"

@@ -171,7 +171,7 @@ class LLMProviderAdapter:
     ) -> str:
         if not model or model.startswith("TBD_"):
             raise ProviderCallError(
-                "provider_error",
+                "config_error",
                 f"Model untuk provider '{provider}' belum ditetapkan ({model}).",
             )
 

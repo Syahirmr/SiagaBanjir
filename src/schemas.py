@@ -40,6 +40,7 @@ OutcomeType = Literal[
 ]
 ApiStatusType = Literal["success", "error", "bypassed"]
 ErrorType = Literal[
+    "config_error",
     "timeout",
     "rate_limit",
     "auth_error",

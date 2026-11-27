@@ -75,6 +75,27 @@ class TestSafetyGuard(unittest.TestCase):
             self.assertIn("BMKG", res.override_message)
             self.assertIn("BPBD", res.override_message)
 
+    def test_regression_tas_siaga_bencana_question_not_ambiguous_or_blocked(self) -> None:
+        exact_query = "Apa saja isi Tas Siaga Bencana untuk menghadapi banjir?"
+        res = self.guard.check(exact_query)
+        self.assertEqual(res.category, "normal")
+        self.assertFalse(res.bypass_llm)
+        self.assertIsNone(res.matched_rule)
+
+        variations = [
+            "Apa isi Tas Siaga Bencana?",
+            "tas siaga?",
+            "arti InaRISK?",
+            "persiapan banjir?",
+            "Barang apa yang wajib disiapkan di tas siaga bencana sebelum banjir?",
+            "Apa langkah aman jika air banjir mulai masuk rumah?",
+            "Apa yang perlu dibersihkan setelah banjir surut agar tidak terkena penyakit?",
+        ]
+        for query in variations:
+            r = self.guard.check(query)
+            self.assertEqual(r.category, "normal", msg=f"Unexpected block on {query!r}: {r}")
+            self.assertFalse(r.bypass_llm)
+
     def test_ambiguous_inputs_request_clarification(self) -> None:
         ambiguous_inputs = [
             "banjir",

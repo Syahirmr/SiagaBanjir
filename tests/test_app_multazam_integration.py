@@ -24,6 +24,7 @@ from src.llm.client import LLMProviderAdapter
 from src.logging.eval_logger import StructuredJsonlLogger
 from src.pipeline.chat_service import ChatService
 from src.retrieval.retriever import BM25CorpusRetriever
+from src.schemas import ChatRequest
 
 
 class _FakeStreamlit:
@@ -48,6 +49,9 @@ class _FakeStreamlit:
         self.titles.append(text)
 
     def subheader(self, text: str) -> None:
+        _ = text
+
+    def caption(self, text: str) -> None:
         _ = text
 
     def warning(self, text: str) -> None:
@@ -145,10 +149,49 @@ class TestAppMultazamIntegration(unittest.TestCase):
             self.assertIsInstance(history[1], HumanMessage)
             self.assertIsInstance(history[2], AIMessage)
             self.assertIn("dokumen penting", extract_message_text(history[2]))
+            self.assertIn("Mode Baseline", extract_message_text(history[2]))
             logged = json.loads(log_path.read_text(encoding="utf-8").splitlines()[0])
             self.assertEqual(logged["mode"], "baseline")
             self.assertEqual(logged["retrieval_status"], "not_applicable")
             self.assertEqual(logged["outcome_type"], "answered_baseline")
+
+    def test_config_error_and_retrieval_error_messages_are_distinct(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            cfg = AppConfig(
+                primary_model="TBD_AFTER_WF016",
+                corpus_manifest_path=Path(tmp) / "missing_manifest.json",
+                corpus_chunks_path=Path(tmp) / "missing_chunks.jsonl",
+            )
+            ret = BM25CorpusRetriever(cfg.corpus_manifest_path, cfg.corpus_chunks_path)
+            adapter = LLMProviderAdapter(cfg)
+            svc = ChatService(cfg, adapter, retriever=ret)
+
+            rag_resp = svc.handle_request(
+                ChatRequest(
+                    request_id="rag_no_corpus",
+                    user_query="Apa saja isi Tas Siaga Bencana untuk menghadapi banjir?",
+                    mode="rag",
+                    run_context="demo",
+                    allow_fallback=False,
+                )
+            )
+            self.assertEqual(rag_resp.outcome_type, "retrieval_error")
+            self.assertEqual(rag_resp.error_type, "index_error")
+            self.assertIn("belum tersedia", rag_resp.answer_text.lower())
+
+            base_resp = svc.handle_request(
+                ChatRequest(
+                    request_id="base_tbd_model",
+                    user_query="Apa saja isi Tas Siaga Bencana untuk menghadapi banjir?",
+                    mode="baseline",
+                    run_context="demo",
+                    allow_fallback=False,
+                )
+            )
+            self.assertEqual(base_resp.outcome_type, "api_error")
+            self.assertEqual(base_resp.error_type, "config_error")
+            self.assertIn("belum ditetapkan", base_resp.answer_text.lower())
+            self.assertNotIn("korpus", base_resp.answer_text.lower())
 
     def test_app_rag_mode_emergency_bypasses_llm_even_without_corpus(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

@@ -42,16 +42,67 @@ ABSTENTION_NO_EVIDENCE_MESSAGE = (
     "**BPBD** setempat, atau **BMKG**."
 )
 
+RETRIEVAL_CORPUS_UNAVAILABLE_MESSAGE = (
+    "Korpus dokumen resmi SiagaBanjir belum tersedia pada lingkungan lokal ini "
+    "(berkas `corpus_manifest.json` / `chunks.jsonl` belum tersedia). "
+    "Untuk menguji percakapan tanpa korpus, silakan pilih mode "
+    "**Baseline (Tanpa Retrieval)** pada sidebar."
+)
+
 RETRIEVAL_ERROR_MESSAGE = (
-    "Maaf, sistem mengalami kendala teknis saat memuat basis pengetahuan korpus "
-    "lokal sehingga pertanyaan belum dapat diproses berbasis sumber resmi. "
-    "Silakan periksa ketersediaan berkas korpus atau coba beberapa saat lagi."
+    "Maaf, sistem mengalami kendala teknis saat memuat indeks korpus lokal "
+    "sehingga pertanyaan belum dapat diproses berbasis sumber resmi. "
+    "Silakan periksa format berkas korpus atau gunakan mode **Baseline**."
 )
 
 API_ERROR_MESSAGE = (
-    "Maaf, layanan model bahasa sedang mengalami gangguan koneksi, batas kuota, "
-    "atau waktu tunggu habis. Silakan coba beberapa saat lagi."
+    "Maaf, layanan model bahasa sedang mengalami kendala pemrosesan. "
+    "Silakan periksa konfigurasi atau coba beberapa saat lagi."
 )
+
+
+def format_api_error_message(error_type: str | None, provider: str | None) -> str:
+    """Menyusun pesan error ramah pengguna sesuai penyebab aktual tanpa membocorkan secret."""
+    prov_label = provider or "LLM"
+    if error_type == "config_error":
+        return (
+            f"Konfigurasi model untuk provider `{prov_label}` belum ditetapkan "
+            "pada berkas `.env` lokal (`PRIMARY_MODEL` masih placeholder). "
+            "Atur nama model yang valid pada `.env` lokal lalu coba lagi."
+        )
+    if error_type == "auth_error":
+        return (
+            f"Autentikasi ke provider `{prov_label}` gagal. Pastikan API key "
+            "sudah terisi dengan benar pada berkas `.env` lokal."
+        )
+    if error_type == "rate_limit":
+        return (
+            f"Batas kuota (rate limit) provider `{prov_label}` sementara tercapai. "
+            "Silakan tunggu sejenak lalu coba kembali."
+        )
+    if error_type == "timeout":
+        return (
+            f"Permintaan ke provider `{prov_label}` melebihi batas waktu tunggu "
+            "(timeout). Silakan coba beberapa saat lagi."
+        )
+    if error_type == "network_error":
+        return (
+            f"Tidak dapat terhubung ke layanan `{prov_label}` karena gangguan "
+            "koneksi jaringan. Periksa koneksi internet Anda lalu coba lagi."
+        )
+    if error_type == "provider_error":
+        return (
+            f"Layanan provider `{prov_label}` sedang mengalami kendala sementara "
+            "(misalnya server sibuk atau model tidak tersedia). Silakan coba lagi."
+        )
+    return API_ERROR_MESSAGE
+
+
+def format_retrieval_error_message(error_message: str | None) -> str:
+    """Membedakan korpus belum tersedia vs kerusakan teknis indeks."""
+    if error_message and "FileNotFoundError" in error_message:
+        return RETRIEVAL_CORPUS_UNAVAILABLE_MESSAGE
+    return RETRIEVAL_ERROR_MESSAGE
 
 _SAFETY_OUTCOME_MAP: dict[str, OutcomeType] = {
     "empty_input": "clarification_requested",
@@ -162,7 +213,7 @@ class ChatService:
                 request_id=request.request_id,
                 mode="rag",
                 outcome_type="retrieval_error",
-                answer_text=RETRIEVAL_ERROR_MESSAGE,
+                answer_text=format_retrieval_error_message(retrieval.error_message),
                 citations=[],
                 retrieved_sources=[],
                 safety_category="normal",
@@ -212,11 +263,12 @@ class ChatService:
         retrieved_summary = [c.to_log_dict() for c in retrieval.chunks]
 
         if llm_res.api_status != "success" or not llm_res.raw_text:
+            err_kind = llm_res.error_type or "provider_error"
             response = ChatResponse(
                 request_id=request.request_id,
                 mode="rag",
                 outcome_type="api_error",
-                answer_text=API_ERROR_MESSAGE,
+                answer_text=format_api_error_message(err_kind, llm_res.provider_actual),
                 citations=[],
                 retrieved_sources=retrieved_summary,
                 safety_category="normal",
@@ -226,7 +278,7 @@ class ChatService:
                 model_actual=llm_res.model_actual,
                 fallback_used=llm_res.fallback_used,
                 api_status="error",
-                error_type=llm_res.error_type or "provider_error",
+                error_type=err_kind,
                 latency_sec=round(time.perf_counter() - started, 4),
             )
             self._write_log(request, response, retrieval=retrieval, llm_result=llm_res)
@@ -294,11 +346,12 @@ class ChatService:
             allow_fallback=request.allow_fallback,
         )
         if llm_res.api_status != "success" or not llm_res.raw_text:
+            err_kind = llm_res.error_type or "provider_error"
             response = ChatResponse(
                 request_id=request.request_id,
                 mode="baseline",
                 outcome_type="api_error",
-                answer_text=API_ERROR_MESSAGE,
+                answer_text=format_api_error_message(err_kind, llm_res.provider_actual),
                 safety_category="normal",
                 corpus_version=None,
                 prompt_version=self.config.prompt_version,
@@ -306,7 +359,7 @@ class ChatService:
                 model_actual=llm_res.model_actual,
                 fallback_used=llm_res.fallback_used,
                 api_status="error",
-                error_type=llm_res.error_type or "provider_error",
+                error_type=err_kind,
                 latency_sec=round(time.perf_counter() - started, 4),
             )
             self._write_log(request, response, retrieval=retrieval_na, llm_result=llm_res)
