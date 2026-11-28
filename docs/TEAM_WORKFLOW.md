@@ -3,7 +3,7 @@
 ## A. Document Overview
 
 > **Judul Proyek:** SiagaBanjir *(Judul akademik final: Open Decision `OD-01`)*  
-> **Status Dokumen:** Draft v0.5 *(Revisi Pembagian Peran Final & Sinkronisasi Git Bootstrap)*  
+> **Status Dokumen:** Draft v0.6 *(Penambahan Aturan Operasional Eksekusi/Handoff & Sinkronisasi `TODO.md` v0.6 / `ARCHITECTURE.md` v0.2)*  
 > **Tanggal Pembuatan:** 24 November 2026  
 > **Tim:** 2 mahasiswa — **Member A (Syahir)** & **Member B (Ramadan)**  
 > **Referensi Utama:** [PRD.md](./PRD.md) (Draft v0.3 — *Source of Truth*)  
@@ -329,7 +329,7 @@ flowchart TD
   4. `.gitignore` mengabaikan `.env`, `.env.*`, dan `.streamlit/secrets.toml` sambil tetap melacak `.env.example`, serta tidak ada kredensial/API key yang terlacak Git.
   5. Repository Git lokal terhubung ke [Syahirmr/SiagaBanjir](https://github.com/Syahirmr/SiagaBanjir) dengan branch `master`, `syahir`, dan `ramadan` siap pakai.
 - **Exit Gate:** Seluruh 5 *Acceptance Criteria* terbukti terpenuhi dan tercatat pada log persetujuan M0 di [TODO.md](./TODO.md).
-- **Status:** `In Progress` *(Awaiting Team Approval dari Syahir & Ramadan)*
+- **Status:** `In Progress` *(Persetujuan Syahir tercatat `24 Nov 2026` & branch `master`/`syahir`/`ramadan` terpublikasi di `c870f71`; menunggu persetujuan Ramadan & verifikasi clone `ramadan`)*
 
 #### `M1` — Technical Plan Approved
 - **Achievement:** Desain teknis arsitektur RAG, kontrak metadata data, desain *safety*, dan skema *logging* disetujui bersama.
@@ -337,10 +337,10 @@ flowchart TD
 - **Prasyarat:** `M0`.
 - **Pekerjaan utama:** `WF-004`, `WF-005`, `WF-006`.
 - **PIC:** Member A / Syahir (`WF-004`, `WF-006`) & Member B / Ramadan (`WF-005`) | Reviewer: Silang (A ↔ B).
-- **Deliverables:** `ARCHITECTURE.md` (*planned*), kontrak skema metadata korpus pada [DATA_DICTIONARY.md](./DATA_DICTIONARY.md), spesifikasi protokol darurat (`FR-07`) & log (`FR-11`).
+- **Deliverables:** [ARCHITECTURE.md](./ARCHITECTURE.md) (Draft v0.2), kontrak skema metadata korpus pada [DATA_DICTIONARY.md](./DATA_DICTIONARY.md), spesifikasi protokol darurat (`FR-07`) & log (`FR-11`).
 - **Acceptance Criteria:** Seluruh `FR-01`–`FR-11` terpetakan ke komponen arsitektur RAG sederhana tanpa *agent* kompleks; format metadata disepakati kedua anggota.
 - **Exit Gate:** `ARCHITECTURE.md` terbit di `docs/`, seluruh `FR-01`–`FR-11` terpetakan, serta kontrak metadata (`WF-005`) dan skema log (`WF-006`) disetujui kedua anggota.
-- **Status:** `In Progress` *(draf awal `WF-005` tersedia di `DATA_DICTIONARY.md`; menunggu `M0`, `WF-004`/`WF-006` & review Ramadan)*
+- **Status:** `In Progress` *(draf `WF-004`/`WF-006` tersedia di [ARCHITECTURE.md](./ARCHITECTURE.md) v0.2 & draf awal `WF-005` di [DATA_DICTIONARY.md](./DATA_DICTIONARY.md) v0.2; menunggu penutupan `M0` & *cross-review* Ramadan)*
 
 #### `M2` — Data Sources Collected & Verified
 - **Achievement:** Kandidat dokumen edukasi kesiapsiagaan banjir resmi Indonesia terkumpul dan terverifikasi asal serta metadatanya.
@@ -445,7 +445,7 @@ flowchart TD
 
 ## F. Detailed Work Breakdown Structure (WBS)
 
-Seluruh tugas di bawah ini berstatus awal **`Not Started`** kecuali tugas `M0` (`WF-001`–`WF-003`) dan draf awal `WF-005`, `WF-007`–`WF-011` yang sedang berstatus `In Progress` (menunggu persetujuan tim dan *cross-review* Ramadan). Setiap baris memuat: **Work ID**, **Pekerjaan, Deskripsi & Tujuan**, **PIC / Reviewer**, **Input/Dependensi**, **Output & Kriteria Selesai**, serta **Milestone & Status**.
+Seluruh tugas di bawah ini berstatus awal **`Not Started`** kecuali tugas `M0` (`WF-001`–`WF-003`) serta draf awal `WF-004`–`WF-011` yang sedang berstatus `In Progress` (menunggu persetujuan Ramadan atas `M0` dan *cross-review* silang). Setiap baris memuat: **Work ID**, **Pekerjaan, Deskripsi & Tujuan**, **PIC / Reviewer**, **Input/Dependensi**, **Output & Kriteria Selesai**, serta **Milestone & Status**. Peta kesiapan eksekusi (*Execution Readiness*) dan dependensi terperinci per Work ID dikelola pada [TODO.md](./TODO.md) Bagian 6.
 
 ### Fase 1 — Project Setup & Documentation Alignment (`M0`)
 
@@ -459,9 +459,9 @@ Seluruh tugas di bawah ini berstatus awal **`Not Started`** kecuali tugas `M0` (
 
 | Work ID | Pekerjaan, Deskripsi & Tujuan | PIC / Reviewer | Input | Output & Kriteria Selesai | Milestone / Status |
 |---|---|---|---|---|---|
-| `WF-004` | **Penyusunan `ARCHITECTURE.md` (RAG & LangChain Selektif)**<br>*Deskripsi:* Rancang diagram komponen dan alur data Streamlit → *retriever* → LangChain selektif → Gemini/Groq API (tanpa *agent* kompleks).<br>*Tujuan:* Memberikan rancangan sistem yang ringan dan dapat diimplementasikan 2 orang. | PIC: Member A (Syahir)<br>Rev: Member B (Ramadan) | `M0`, `PRD.md` Bag. 7–9 | **Output:** `ARCHITECTURE.md` (*planned*).<br>**Selesai jika:** Seluruh komponen `FR-01`–`FR-11` dan mode Baseline vs RAG tergambar jelas. | `M1`<br>Not Started |
-| `WF-005` | **Penetapan Kontrak Skema Metadata & Chunk Korpus**<br>*Deskripsi:* Tetapkan dan tinjau struktur field wajib (`source_id`, judul, instansi, `source_date`, `retrieved_date`, halaman/bagian, cakupan wilayah) dari draf awal [DATA_DICTIONARY.md](./DATA_DICTIONARY.md).<br>*Tujuan:* Menjamin output data Ramadan langsung siap dikonsumsi *pipeline* RAG Syahir. | PIC: Member B (Ramadan)<br>Rev: Member A (Syahir) | `WF-004`, `PRD.md` Bag. 11 | **Output:** Spesifikasi kontrak data terverifikasi di `DATA_DICTIONARY.md` & `ARCHITECTURE.md`.<br>**Selesai jika:** Kedua anggota menyetujui format file/field *handoff*. | `M1`<br>In Progress |
-| `WF-006` | **Desain Protokol Safety Darurat & Skema Log Reproducibility**<br>*Deskripsi:* Rancang aturan *prompt*/deteksi situasi darurat akut (`FR-07`), *abstention* (`FR-05`), klarifikasi ambigu (`FR-08`), dan format log (`FR-11`).<br>*Tujuan:* Mengunci standar keselamatan dan keterlacakan eksperimen sebelum coding. | PIC: Member A (Syahir)<br>Rev: Member B (Ramadan) | `WF-004`, `PRD.md` Bag. 10 & 12 | **Output:** Spesifikasi *safety prompt* & skema log JSON/CSV.<br>**Selesai jika:** Mencakup seluruh field wajib (`provider`, `model_id`, `corpus_version`, `source_dates`, latensi). | `M1`<br>Not Started |
+| `WF-004` | **Penyusunan `ARCHITECTURE.md` (RAG & LangChain Selektif)**<br>*Deskripsi:* Rancang diagram komponen dan alur data Streamlit → *retriever* → LangChain selektif → Gemini/Groq API (tanpa *agent* kompleks).<br>*Tujuan:* Memberikan rancangan sistem yang ringan dan dapat diimplementasikan 2 orang. | PIC: Member A (Syahir)<br>Rev: Member B (Ramadan) | `M0`, `PRD.md` Bag. 7–9 | **Output:** [ARCHITECTURE.md](./ARCHITECTURE.md) (Draft v0.2).<br>**Selesai jika:** Seluruh komponen `FR-01`–`FR-11` dan mode Baseline vs RAG tergambar jelas serta lolos *cross-review*. | `M1`<br>In Progress |
+| `WF-005` | **Penetapan Kontrak Skema Metadata & Chunk Korpus**<br>*Deskripsi:* Tetapkan dan tinjau struktur field wajib (`source_id`, judul, instansi, `source_date`, `retrieved_date`, halaman/bagian, cakupan wilayah) dari draf awal [DATA_DICTIONARY.md](./DATA_DICTIONARY.md).<br>*Tujuan:* Menjamin output data Ramadan langsung siap dikonsumsi *pipeline* RAG Syahir. | PIC: Member B (Ramadan)<br>Rev: Member A (Syahir) | `M0`, koordinasi dgn `WF-004`, `PRD.md` Bag. 11 | **Output:** Spesifikasi kontrak data terverifikasi di `DATA_DICTIONARY.md` & `ARCHITECTURE.md`.<br>**Selesai jika:** Kedua anggota menyetujui format file/field *handoff*. | `M1`<br>In Progress |
+| `WF-006` | **Desain Protokol Safety Darurat & Skema Log Reproducibility**<br>*Deskripsi:* Rancang aturan *prompt*/deteksi situasi darurat akut (`FR-07`), *abstention* (`FR-05`), klarifikasi ambigu (`FR-08`), dan format log (`FR-11`).<br>*Tujuan:* Mengunci standar keselamatan dan keterlacakan eksperimen sebelum coding. | PIC: Member A (Syahir)<br>Rev: Member B (Ramadan) | `WF-004`, `PRD.md` Bag. 10 & 12 | **Output:** Spesifikasi *safety prompt* & skema log JSONL di [ARCHITECTURE.md](./ARCHITECTURE.md) Bag. 11–12.<br>**Selesai jika:** Mencakup seluruh field wajib (`provider`, `model_id`, `prompt_version`, `corpus_version`, `source_dates`, latensi) serta lolos *cross-review*. | `M1`<br>In Progress |
 
 ### Fase 3 — Data Collection & Source Verification (`M2`)
 
@@ -577,6 +577,22 @@ Seluruh tugas di bawah ini berstatus awal **`Not Started`** kecuali tugas `M0` (
 2. Kedua anggota mengevaluasi apakah pekerjaan paralel lain masih dapat berjalan sementara *blocker* diselesaikan.
 3. Jika *blocker* menghambat jalur kritis lebih dari 1–2 sesi kerja, kedua anggota berkolaborasi langsung menyelesaikan *blocker* tersebut (tanpa memindahkan kepemilikan akhir secara permanen) atau mengaktifkan rencana kontinjensi pada Bagian K.
 
+### G.4 Aturan Operasional Eksekusi, Handoff, Cross-Review & Sinkronisasi Keputusan
+Agar kedua anggota tahu kapan boleh bekerja mandiri, paralel, atau wajib menunggu, seluruh eksekusi harian mematuhi 8 aturan berikut:
+1. **Cek Kesiapan Sebelum Mulai Kerja:** Sebelum memulai Work ID apa pun, PIC wajib memeriksa tabel *Execution Readiness & Dependency Map* di [TODO.md](./TODO.md) Bagian 6. Pastikan *hard prerequisite* terpenuhi dan bedakan secara tegas antara `Progress Status` (`Not Started`/`In Progress`/`Blocked`/`Completed`) dengan `Execution Readiness` (`Ready`/`Ready-Coordination`/`Blocked`/`Joint-Gate`).
+2. **Aturan Draf Awal (*Provisional Draft*):** Tugas berstatus `Ready-Coordination` boleh mulai disusun sebagai draf *provisional* di branch pribadi agar paralelisme tidak macet, namun wajib diberi label draf sementara di header dokumen dan catatan [TODO.md](./TODO.md). Output *provisional* **tidak boleh** mengubah status Work ID menjadi `Completed` sebelum *hard prerequisite* dan *cross-review* terpenuhi.
+3. **Prosedur *Handoff* Antar-Branch:**
+   - (a) PIC menyelesaikan output di branch pribadinya (`syahir` atau `ramadan`) dan memverifikasi *Definition of Done* serta kriteria `G.2`;
+   - (b) PIC melakukan *commit* dengan prefix konsisten (`docs:`/`data:`/`feat:`/`test:` + referensi `WF-XXX`) dan *push* ke branch pribadinya;
+   - (c) PIC mengirim pemberitahuan melalui WhatsApp berisi Work ID, branch, file/link PR, dan kriteria penerimaan;
+   - (d) Penerima meninjau sesuai *Handoff Acceptance* (`G.2`) dan mencatat penerimaan atau revisi pada PR & [TODO.md](./TODO.md).
+4. **Format Permintaan *Cross-Review*:** Gunakan format ringkas standar pada WhatsApp:  
+   `[WF-XXX] [Milestone] siap cross-review — branch: <syahir|ramadan>, file/PR: <path/link>, cek utama: <ringkas DoD/Handoff>`.
+5. **Pencatatan Keputusan WhatsApp → Repository:** Setiap keputusan teknis atau operasional yang disepakati melalui WhatsApp (mis. pilihan sumber tambahan, parameter *chunk*, penutupan `TD-*`/`OD-*`) wajib dicatat ke [TODO.md](./TODO.md) Bagian 5.2 pada hari yang sama dengan format `Tanggal | ID/Topik | Status | Ringkasan | Dampak Dokumen` agar tidak hilang dari konteks repositori.
+6. **Aturan Pull Request ke `master`:** Integrasi ke `master` hanya dilakukan melalui Pull Request di GitHub setelah review partner (dan untuk penutupan milestone, hanya setelah seluruh *Exit Gate* terbukti terpenuhi). Dilarang *direct push* ke `master`.
+7. **Eskalasi *Blocker*:** Jika PIC terhambat lebih dari 1 sesi kerja, segera perbarui status `Blocked` beserta `Blocked Reason & Pembuka` di [TODO.md](./TODO.md) dan kabari partner melalui WhatsApp agar pekerjaan paralel lain tetap berjalan; bila hambatan menahan jalur kritis > 2 sesi, kedua anggota menyelesaikannya bersama.
+8. **Aturan Anti-Klaim Persetujuan (*Non-Claim Rule*):** Dilarang mencatat atau mengklaim persetujuan anggota lain (termasuk pada log M0 atau *Exit Gate*) tanpa konfirmasi eksplisit langsung dari anggota tersebut; pertahankan status `*Belum dicatat*` sampai dikonfirmasi.
+
 ---
 
 ## H. Evaluation Workstream
@@ -605,11 +621,11 @@ Alur evaluasi terhubung langsung dengan [PRD.md](./PRD.md) Bagian 12 dan dijalan
 | Dokumen | Status Saat Ini | Fungsi Utama | Dokumen Sumber yang Dirujuk | Hubungan dengan Dokumen Lain |
 |---|---|---|---|---|
 | [PRD.md](./PRD.md) | **Tersedia** (Draft v0.3) | Menetapkan *apa* dan *mengapa* proyek dibangun (tujuan, scope, FR/NFR, keselamatan, evaluasi, luaran). | Instruksi Big Project dosen & keputusan tim | **Source of Truth** seluruh dokumen proyek. |
-| [TEAM_WORKFLOW.md](./TEAM_WORKFLOW.md) | **Tersedia** (Draft v0.5 — Dokumen ini) | Menetapkan *siapa*, *bagaimana*, urutan fase, WBS, milestone, *handoff*, Git branching, dan tata kelola. | [PRD.md](./PRD.md) | Menerjemahkan PRD menjadi eksekusi terukur & acuan [TODO.md](./TODO.md). |
-| [TODO.md](./TODO.md) | **Tersedia** (Draft v0.4) | Melacak status aktual 42 Work ID, milestone `M0`–`M9` + `M-OPT`, jadwal Sprint 7 Hari, *blocker*, dan persetujuan M0. | [PRD.md](./PRD.md), [TEAM_WORKFLOW.md](./TEAM_WORKFLOW.md) | Menggunakan Work ID dan Milestone ID yang identik dengan dokumen ini. |
+| [TEAM_WORKFLOW.md](./TEAM_WORKFLOW.md) | **Tersedia** (Draft v0.6 — Dokumen ini) | Menetapkan *siapa*, *bagaimana*, urutan fase, WBS, milestone, aturan *handoff*/eksekusi, Git branching, dan tata kelola. | [PRD.md](./PRD.md) | Menerjemahkan PRD menjadi eksekusi terukur & acuan [TODO.md](./TODO.md). |
+| [TODO.md](./TODO.md) | **Tersedia** (Draft v0.6) | Melacak status aktual 42 Work ID, milestone `M0`–`M9` + `M-OPT`, Sprint 7 Hari, *Execution Readiness & Dependency Map* (Bag. 6), *blocker*, dan persetujuan M0. | [PRD.md](./PRD.md), [TEAM_WORKFLOW.md](./TEAM_WORKFLOW.md) | Menggunakan Work ID dan Milestone ID yang identik dengan dokumen ini. |
 | [DATA_DICTIONARY.md](./DATA_DICTIONARY.md) | **Tersedia** (Draft v0.2 — draf awal audit fisik) | Menjelaskan kontrak metadata (`WF-005`), inventaris sumber, hasil *physical audit*, dan kelayakan BNPB. | [PRD.md](./PRD.md), [TEAM_WORKFLOW.md](./TEAM_WORKFLOW.md) | Artefak awal yang ditinjau & dilanjutkan Ramadan menuju `M3` dan `M5`. |
-| [context_windows.md](./context_windows.md) | **Tersedia** (Draft v0.3) | Ringkasan pemulihan konteks (*context recovery*) dan protokol *cold-start* bagi AI/agent lintas sesi. | [PRD.md](./PRD.md), [TEAM_WORKFLOW.md](./TEAM_WORKFLOW.md), [TODO.md](./TODO.md) | Diperbarui setiap ada perubahan keputusan, *Open Decision*, atau status milestone. |
-| [ARCHITECTURE.md](./ARCHITECTURE.md) | *Planned Document* (belum dibuat) | Menjelaskan desain teknis RAG, LangChain selektif, konfigurasi LLM/API, *safety*, dan *logging*. | [PRD.md](./PRD.md), [TEAM_WORKFLOW.md](./TEAM_WORKFLOW.md) | Menerjemahkan kebutuhan fungsional/non-fungsional menjadi rancangan sistem (`M1`, `M4`). |
+| [ARCHITECTURE.md](./ARCHITECTURE.md) | **Tersedia** (Draft v0.2 — draf teknis M1 siap review) | Menjelaskan desain teknis RAG, LangChain selektif, konfigurasi LLM/API, *safety protocol*, dan skema *logging*. | [PRD.md](./PRD.md), [TEAM_WORKFLOW.md](./TEAM_WORKFLOW.md) | Menerjemahkan kebutuhan `FR-01`–`FR-11` menjadi rancangan sistem (`M1`, `M4`). |
+| [context_windows.md](./context_windows.md) | **Tersedia** (Draft v0.5) | Ringkasan pemulihan konteks (*context recovery*) dan protokol *cold-start* bagi AI/agent lintas sesi. | [PRD.md](./PRD.md), [TEAM_WORKFLOW.md](./TEAM_WORKFLOW.md), [TODO.md](./TODO.md), [ARCHITECTURE.md](./ARCHITECTURE.md) | Diperbarui setiap ada perubahan keputusan, *Open Decision*, atau status milestone. |
 | [EVALUATION_PLAN.md](./EVALUATION_PLAN.md) | *Planned Document* (belum dibuat) | Menjelaskan 30 pertanyaan uji, kasus darurat, *ground truth*, rubrik final (`OD-05`), dan protokol Baseline vs RAG. | [PRD.md](./PRD.md), [DATA_DICTIONARY.md](./DATA_DICTIONARY.md) | Mengimplementasikan strategi evaluasi PRD (`M7`, `M8`). |
 
 > *Catatan:* Tautan relatif untuk dokumen berstatus *Planned Document* disiapkan sebagai peta referensi dan akan aktif setelah berkas terkait dibuat pada milestone masing-masing.
@@ -815,3 +831,4 @@ Tanpa merombak struktur proyek yang sudah berjalan (termasuk skrip awal `audit_d
 | 0.3 | 24 November 2026 | Eksekusi persiapan M0 & sinkronisasi: penambahan Bagian M (*Git Collaboration, Branching Strategy & Repository Convention*) untuk repository [Syahirmr/SiagaBanjir](https://github.com/Syahirmr/SiagaBanjir) dengan branch `master`, `syahir`, dan `ramadan` (11 aturan Git, perintah aman, status pemeriksaan `.git` lokal & instruksi setup manual, konvensi `docs/`–`data/raw/`–`data/processed/`, serta keamanan `.gitignore`/`.env`); pembaruan kepemilikan branch di Bagian C, Fase 1, `M0` (*Acceptance Criteria* & status `In Progress — Awaiting Team Approval`), dan `WF-001`–`WF-003`; serta pembaruan *Document Governance* (Bagian I) karena `docs/TODO.md` kini berstatus Tersedia (Draft v0.1). |
 | 0.4 | 24 November 2026 | Sinkronisasi Sprint Plan 7 Hari ([TODO.md](./TODO.md) v0.2) dan penambahan [context_windows.md](./context_windows.md) (v0.1) pada *Document Governance* (Bagian I), catatan penjadwalan (Bagian D), dan status `OD-04` (Bagian J.3). |
 | 0.5 | 24 November 2026 | Revisi pembagian peran final (**Member A / Syahir: LLM & Application Engineering** — 13 tugas solo; **Member B / Ramadan: Data & Knowledge Preparation** — 11 tugas solo termasuk `WF-018` dgn koordinasi Syahir & QA `WF-026`; **14 tugas bersama**), pembaruan seluruh PIC/reviewer di Bagian C–K, pembaruan status `DATA_DICTIONARY.md` (Tersedia v0.2 — artefak audit awal siap review Ramadan) dan `M1`–`M3`, serta penyesuaian prosedur Git bootstrap (Bagian M.4). |
+| 0.6 | 24 November 2026 | Penambahan Bagian `G.4` (*Aturan Operasional Eksekusi, Handoff, Cross-Review & Sinkronisasi Keputusan*: cek kesiapan `TODO.md` Bag. 6, aturan draf *provisional*, prosedur *handoff* antar-branch, format permintaan *cross-review*, pencatatan keputusan WhatsApp → repo, aturan PR ke `master`, eskalasi *blocker*, dan *non-claim rule*); sinkronisasi status `M0`/`M1`, `WF-004`/`WF-006` (`In Progress`), dan peta dokumen Bagian `I.1` (`ARCHITECTURE.md` Tersedia Draft v0.2, `TODO.md` v0.6, `context_windows.md` v0.5). |
